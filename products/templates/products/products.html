@@ -17,11 +17,9 @@
 
                 <h1 class="my-4">Store</h1>
                 <div class="list-group">
-                    <a href="#" class="list-group-item">Новинки</a>
-                    <a href="#" class="list-group-item">Одежда</a>
-                    <a href="#" class="list-group-item">Обувь</a>
-                    <a href="#" class="list-group-item">Аксессуары</a>
-                    <a href="#" class="list-group-item">Подарки</a>
+                    {% for cat in cats %}
+                    <a href="#" class="list-group-item">{{ cat }}</a>
+                    {% endfor %}
                 </div>
 
             </div>
@@ -63,18 +61,18 @@
                             <div class="card h-100">
                                 <a href="#">
                                     <img class="card-img-top"
-                                         src="{% static prod.image %}"
+                                         src="{{ prod.image.url }}"
                                          alt="">
                                 </a>
                                 <div class="card-body">
                                     <h4 class="card-title">
                                         <a href="#">{{ prod.name }}</a>
                                     </h4>
-                                    <h5>{{ prod.price }} руб.</h5>
+                                    <h5>{{ prod.price }} €</h5>
                                     <p class="card-text">{{ prod.description }}</p>
                                 </div>
                                 <div class="card-footer text-center">
-                                    <button type="button" class="btn btn-outline-success">Отправить в корзину</button>
+                                    <button type="button" class="btn btn-outline-success">Add to cart</button>
                                 </div>
                             </div>
                         </div>
