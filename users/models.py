@@ -6,8 +6,8 @@ class User(AbstractUser):
     GENDERS = [
         ('m', 'Male'),
         ('f', 'Female'),
-        ('o', 'I am not a human'),
+        ('o', 'I am an alien'),
     ]
     image = models.ImageField(upload_to='users_image', null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDERS, default='m')
-    birthday = models.DateField(default='1900-01-01')
+    birthday = models.DateField(blank=True)

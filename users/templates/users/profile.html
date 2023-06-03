@@ -3,6 +3,7 @@
 
 {% block css %}
     <link href="{% static 'vendor/css/profile.css' %}" rel="stylesheet">
+
 {% endblock %}
 
 {% block content %}
@@ -41,6 +42,22 @@
                             {{ form.image }}
                             <label class="custom-file-label" for="{{ form.image.id_for_label }}">
                                 {{ form.image.label }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="small mb-1" for="{{ form.gender.id_for_label }}">
+                                {{ form.gender.label }}</label>
+                            {{ form.gender }}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="small mb-1" for="{{ form.birthday.id_for_label }}">
+                                {{ form.birthday.label }}</label>
+                            {{ form.birthday }}
                         </div>
                     </div>
                 </div>
@@ -99,4 +116,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
