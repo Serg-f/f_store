@@ -50,28 +50,46 @@ class UserRegisterForm(UserCreationForm):
 
 
 class UserProfileForm(UserChangeForm):
+    GENDERS = [
+        ('m', 'Male'),
+        ('f', 'Female'),
+        ('o', 'I am an alien'),
+    ]
+
     image = forms.ImageField(widget=forms.FileInput(attrs={
         'class': 'custom-file-input',
         'size': '50',
     }), label='Choose an image', required=False)
+
     first_name = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control py-4',
     }))
+
     last_name = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control py-4',
     }))
+
     username = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control py-4',
         'aria-describedby': "usernameHelp",
-    }), disabled=True, label='User name')
+        'readonly': True,
+    }), label='User name')
+
     email = forms.EmailField(widget=forms.EmailInput(attrs={
         'class': 'form-control py-4',
         'aria-describedby': "emailHelp",
-    }), disabled=True, label='Email address')
+        'readonly': True,
+    }), label='Email address')
 
+    gender = forms.ChoiceField(choices=GENDERS, widget=forms.RadioSelect(attrs={
+        'class': 'form-gender',
+    }), label='Gender')
+
+    birthday = forms.DateField(widget=forms.DateInput(attrs={
+        'type': 'date',
+        'class': 'form-control',
+        'placeholder': 'YYYY-MM-DD',
+    }), label='Birthday')
     class Meta:
         model = User
-        fields = ('image', 'first_name', 'last_name', 'username', 'email',
-                  # 'gender',
-                  # 'birthday',
-                  )
+        fields = ('image', 'first_name', 'last_name', 'username', 'email', 'gender', 'birthday',)
