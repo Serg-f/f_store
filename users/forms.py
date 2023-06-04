@@ -19,6 +19,7 @@ class UserLoginForm(AuthenticationForm):
 
 
 class UserRegisterForm(UserCreationForm):
+
     first_name = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control py-4',
         'placeholder': 'Input your name',

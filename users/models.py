@@ -10,4 +10,4 @@ class User(AbstractUser):
     ]
     image = models.ImageField(upload_to='users_image', null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDERS, default='m')
-    birthday = models.DateField(blank=True)
+    birthday = models.DateField(blank=True, null=True, default=None)
