@@ -17,7 +17,7 @@
 
     <!-- Custom styles for this template -->
 
-{#    <link href="{% static 'css/custom.css' %}" rel="stylesheet">#}
+    <link href="{% static 'vendor/css/base_messages.css' %}" rel="stylesheet">
     {% block css %} {% endblock %}
 
 </head>
@@ -66,8 +66,22 @@
     </div>
 </nav>
 
+<div class="container">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-success" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</div>
+
 <!-- Page Content -->
-{% block content %} {% endblock %}
+{#{% block content %} {% endblock %}#}
 
 {% block footer %} {% endblock %}
 
