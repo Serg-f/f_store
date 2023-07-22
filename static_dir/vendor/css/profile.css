@@ -23,34 +23,3 @@ body {
     pointer-events: none;
 }
 
-
-/*!* CSS for success messages *!*/
-/*.messages {*/
-/*    margin-bottom: 20px;*/
-/*}*/
-
-/*.alert {*/
-/*    padding: 10px;*/
-/*    margin-bottom: 10px;*/
-/*    border-radius: 5px;*/
-/*}*/
-
-/*.alert-success {*/
-/*    background-color: #dff0d8;*/
-/*    color: #3c763d;*/
-/*    border-color: #d6e9c6;*/
-/*}*/
-
-/*!* CSS for error messages *!*/
-/*.errors {*/
-/*    margin-bottom: 20px;*/
-/*}*/
-
-/*.alert-danger {*/
-/*    padding: 10px;*/
-/*    margin-bottom: 10px;*/
-/*    border-radius: 0.25rem;*/
-/*    color: #721c24;*/
-/*    background-color: #f8d7da;*/
-/*    border-color: #f5c6cb;*/
-/*}*/

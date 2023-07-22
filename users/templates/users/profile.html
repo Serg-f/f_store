@@ -1,5 +1,6 @@
 {% extends 'products/base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block css %}
     <link href="{% static 'vendor/css/profile.css' %}" rel="stylesheet">
@@ -20,50 +21,20 @@
                 </div>
 
                 <div class="container">
-                    <!-- Messages -->
-{#                    <div>#}
-{#                        <!-- Success messages -->#}
-{#                        {% if messages %}#}
-{#                            <div class="messages">#}
-{#                                {% for message in messages %}#}
-{#                                    <div class="alert alert-success" role="alert">#}
-{#                                        {{ message }}#}
-{#                                    </div>#}
-{#                                {% endfor %}#}
-{#                            </div>#}
-{#                        {% endif %}#}
-{##}
-{#                        <!-- Error messages -->#}
-{#                        {% if form.errors %}#}
-{#                            <div class="errors">#}
-{#                                {% for field in form %}#}
-{#                                    {% if field.errors %}#}
-{#                                        <div class="alert alert-danger" role="alert">#}
-{#                                            {{ field.label }}:#}
-{#                                            {% for error in field.errors %}#}
-{#                                                {{ error }}#}
-{#                                            {% endfor %}#}
-{#                                        </div>#}
-{#                                    {% endif %}#}
-{#                                {% endfor %}#}
-{#                            </div>#}
-{#                        {% endif %}#}
-{#                    </div>#}
+
                     <!-- Existing profile form and other content -->
                     <form action="{% url 'users:profile' %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="form-row">
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label class="small mb-1" for="{{ form.first_name.id_for_label }}">
-                                        {{ form.first_name.label }}</label>
+                                    {{ form.first_name.label_tag|add_label_class:"small mb-1"|safe }}
                                     {{ form.first_name }}
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label class="small mb-1" for="{{ form.last_name.id_for_label }}">
-                                        {{ form.last_name.label }}</label>
+                                    {{ form.last_name.label_tag|add_label_class:"small mb-1"|safe }}
                                     {{ form.last_name }}
                                 </div>
                             </div>
@@ -73,35 +44,31 @@
                                 <div class="custom-file">
                                     {{ form.image }}
                                     <label class="custom-file-label" for="{{ form.image.id_for_label }}">
-                                        {{ form.image.label }}</label>
+                                        Choose an image</label>
                                 </div>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label class="small mb-1" for="{{ form.gender.id_for_label }}">
-                                        {{ form.gender.label }}</label>
+                                    {{ form.gender.label_tag|add_label_class:"small mb-1"|safe }}
                                     {{ form.gender }}
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label class="small mb-1" for="{{ form.birthday.id_for_label }}">
-                                        {{ form.birthday.label }}</label>
-                                    {{ form.birthday }}
+                                    {{ form.birthday.label_tag|add_label_class:"small mb-1"|safe }}
+                                    {{ form.birthday}}
                                 </div>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="col-lg-6">
-                                <label class="small mb-1"
-                                       for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                                {{ form.username.label_tag|add_label_class:"small mb-1"|safe }}
                                 {{ form.username }}
                             </div>
                             <div class="col-lg-6">
-                                <label class="small mb-1"
-                                       for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                                {{ form.email.label_tag|add_label_class:"small mb-1"|safe }}
                                 {{ form.email }}
                             </div>
                         </div>

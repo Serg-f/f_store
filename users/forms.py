@@ -3,94 +3,66 @@ from users.models import User
 from django import forms
 
 
-class UserLoginForm(AuthenticationForm):
-    username = forms.CharField(widget=forms.TextInput(attrs={
-        'class': "form-control py-4",
-        'placeholder': "Input user name",
-    }))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={
-        'class': "form-control py-4",
-        'placeholder': "Input password",
-    }))
+class SetHtmlClassMixin(forms.Form):
+    def __init__(self, *args, **kwargs):
+        fields_for_edit = ('first_name', 'last_name', 'username', 'email', 'password', 'password1', 'password2')
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            if name in fields_for_edit:
+                field.widget.attrs['class'] = 'form-control py-4'
+
+
+class UserLoginForm(SetHtmlClassMixin, AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['placeholder'] = "Input user name"
+        self.fields['password'].widget.attrs['placeholder'] = "Input password"
 
     class Meta:
         model = User
         fields = ('username', 'password')
 
 
-class UserRegisterForm(UserCreationForm):
-
-    first_name = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control py-4',
-        'placeholder': 'Input your name',
-    }))
-    last_name = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control py-4',
-        'placeholder': 'Input your surname',
-    }))
-    username = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control py-4',
-        'placeholder': 'Input your username',
-    }))
-    email = forms.EmailField(widget=forms.EmailInput(attrs={
-        'class': 'form-control py-4',
-        'placeholder': 'Input your email',
-    }))
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={
-        'class': 'form-control py-4',
-        'placeholder': 'Input your password',
-    }))
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput(attrs={
-        'class': 'form-control py-4',
-        'placeholder': 'Confirm your password',
-    }))
+class UserRegisterForm(SetHtmlClassMixin, UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        set_placeholder = {
+            'first_name': 'Input your name',
+            'last_name': 'Input your surname',
+            'username': 'Input your username',
+            'email': 'Input your email',
+            'password1': 'Input your password',
+            'password2': 'Confirm your password'
+        }
+        for name, placeholder in set_placeholder.items():
+            self.fields[name].widget.attrs['placeholder'] = placeholder
 
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2')
 
 
-class UserProfileForm(UserChangeForm):
-    GENDERS = [
-        ('m', 'Male'),
-        ('f', 'Female'),
-        ('o', 'I am an alien'),
-    ]
+class UserProfileForm(SetHtmlClassMixin, UserChangeForm):
 
-    image = forms.ImageField(widget=forms.FileInput(attrs={
-        'class': 'custom-file-input',
-        'size': '50',
-    }), label='Choose an image', required=False)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].disabled = True
+        self.fields['username'].label = 'User name'
+        self.fields['email'].disabled = True
 
-    first_name = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control py-4',
-    }))
-
-    last_name = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control py-4',
-    }))
-
-    username = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control py-4',
-        'aria-describedby': "usernameHelp",
-        'readonly': True,
-    }), label='User name')
-
-    email = forms.EmailField(widget=forms.EmailInput(attrs={
-        'class': 'form-control py-4',
-        'aria-describedby': "emailHelp",
-        'readonly': True,
-    }), label='Email address')
-
-    gender = forms.ChoiceField(choices=GENDERS, widget=forms.RadioSelect(attrs={
-        'class': 'form-gender',
-    }), label='Gender')
-
-    birthday = forms.DateField(widget=forms.DateInput(attrs={
-        'type': 'date',
-        'class': 'form-control',
-        'placeholder': 'YYYY-MM-DD',
-    }), label='Birthday')
     class Meta:
         model = User
         fields = ('image', 'first_name', 'last_name', 'username', 'email', 'gender', 'birthday',)
+        widgets = {
+            'image': forms.FileInput(attrs={
+                'class': 'custom-file-input',
+                'size': '50',
+            }),
+            'gender': forms.RadioSelect(attrs={
+                'class': "form-gender",
+            }),
+            'birthday': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'form-control',
+            }),
+        }
