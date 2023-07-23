@@ -68,11 +68,13 @@
                                     <h4 class="card-title">
                                         <a href="#">{{ prod.name }}</a>
                                     </h4>
-                                    <h5>{{ prod.price }} €</h5>
+                                    <h5>{{ prod.price|floatformat:"-2" }} €</h5>
                                     <p class="card-text">{{ prod.description }}</p>
                                 </div>
                                 <div class="card-footer text-center">
+                                    <a href="{% url 'products:cart_add' prod.id %}">
                                     <button type="button" class="btn btn-outline-success">Add to cart</button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
