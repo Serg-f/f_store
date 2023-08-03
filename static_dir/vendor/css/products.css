@@ -1,3 +1,11 @@
 body {
     padding-top: 56px;
 }
+
+.pag {
+    border: 1px solid #0056b3;
+}
+
+.no_goods {
+    margin: 40px auto;
+}

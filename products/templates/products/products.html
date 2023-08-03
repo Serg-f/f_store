@@ -18,7 +18,7 @@
                 <h1 class="my-4">Store</h1>
                 <div class="list-group">
                     {% for cat in cats %}
-                    <a href="#" class="list-group-item">{{ cat }}</a>
+                        <a href="{% url 'products:category' cat.id %}" class="list-group-item">{{ cat }}</a>
                     {% endfor %}
                 </div>
 
@@ -35,13 +35,16 @@
                     </ol>
                     <div class="carousel-inner" role="listbox">
                         <div class="carousel-item active">
-                            <img class="d-block img-fluid" src="{% static '/vendor/img/slides/slide-1.jpg' %}" alt="First slide">
+                            <img class="d-block img-fluid" src="{% static '/vendor/img/slides/slide-1.jpg' %}"
+                                 alt="First slide">
                         </div>
                         <div class="carousel-item">
-                            <img class="d-block img-fluid" src="{% static '/vendor/img/slides/slide-2.jpg' %}" alt="Second slide">
+                            <img class="d-block img-fluid" src="{% static '/vendor/img/slides/slide-2.jpg' %}"
+                                 alt="Second slide">
                         </div>
                         <div class="carousel-item">
-                            <img class="d-block img-fluid" src="{% static '/vendor/img/slides/slide-3.jpg' %}" alt="Third slide">
+                            <img class="d-block img-fluid" src="{% static '/vendor/img/slides/slide-3.jpg' %}"
+                                 alt="Third slide">
                         </div>
                     </div>
                     <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -55,7 +58,7 @@
                 </div>
 
                 <div class="row">
-                    {% for prod in products %}
+                    {% for prod in product_list %}
 
                         <div class="col-lg-4 col-md-6 mb-4">
                             <div class="card h-100">
@@ -73,29 +76,51 @@
                                 </div>
                                 <div class="card-footer text-center">
                                     <a href="{% url 'products:cart_add' prod.id %}">
-                                    <button type="button" class="btn btn-outline-success">Add to cart</button>
+                                        <button type="button" class="btn btn-outline-success">Add to cart</button>
                                     </a>
                                 </div>
                             </div>
                         </div>
-
+                        {% empty %}
+                            <div class="no_goods">No goods in this category</div>
                     {% endfor %}
 
                 </div>
 
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
-                    </ul>
-                </nav>
+                {% if page_obj.has_other_pages %}
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Previous</a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                <li class="page-item{% if num == page_obj.number %} disabled pag{% endif %}">
+                                    <a class="page-link"
+                                       href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                            {% endif %}
+
+                        </ul>
+                    </nav>
+
+                {% endif %}
 
             </div>
 
