@@ -1,10 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView, ListView
+from django.shortcuts import get_object_or_404, render
+from django.views.generic import ListView, TemplateView
 
-from .models import Product, ProdCategory, CartItem
+from .models import CartItem, ProdCategory, Product
 
 
 class IndexView(TemplateView):

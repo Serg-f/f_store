@@ -1,6 +1,12 @@
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
-from users.models import User
+from datetime import timedelta
+
 from django import forms
+from django.contrib.auth.forms import (AuthenticationForm, UserChangeForm,
+                                       UserCreationForm)
+from django.core.exceptions import ValidationError
+from django.utils.timezone import now
+
+from users.models import EmailVerification, User
 
 
 class SetHtmlClassMixin(forms.Form):
@@ -17,6 +23,11 @@ class UserLoginForm(SetHtmlClassMixin, AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs['placeholder'] = "Input user name"
         self.fields['password'].widget.attrs['placeholder'] = "Input password"
+
+    def confirm_login_allowed(self, user):
+        super().confirm_login_allowed(user)
+        if not user.is_verified_email:
+            raise ValidationError("To login please confirm your email first")
 
     class Meta:
         model = User
@@ -40,6 +51,12 @@ class UserRegisterForm(SetHtmlClassMixin, UserCreationForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2')
+
+    def save(self, commit=True):
+        user = super().save(commit=True)
+        email_verification_object = EmailVerification.objects.create(user=user)
+        email_verification_object.send_verification_email()
+        return user
 
 
 class UserProfileForm(SetHtmlClassMixin, UserChangeForm):

@@ -1,16 +1,15 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.messages.views import SuccessMessageMixin
-from django.views.generic.base import ContextMixin
-
-from django.contrib.auth.views import LoginView, LogoutView
-from django.views.generic import CreateView, UpdateView
-
-from users.forms import UserLoginForm, UserRegisterForm, UserProfileForm
-from products.models import CartItem
-from users.models import User
-
-from django.urls import reverse_lazy
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, UpdateView
+from django.views.generic.base import ContextMixin, TemplateView
+
+from products.models import CartItem
+from users.forms import UserLoginForm, UserProfileForm, UserRegisterForm
+from users.models import EmailVerification, User
 
 
 class TitleMixin(ContextMixin):
@@ -24,7 +23,7 @@ class UserLoginView(SuccessMessageMixin, TitleMixin, LoginView):
     title = 'Authorization'
     template_name = 'users/login.html'
     form_class = UserLoginForm
-    success_message = 'Welcome, %(username)s!\nYou have successfully logged in.'
+    success_message = 'Welcome, %(username)s!\nYou have been successfully logged in.'
 
 
 class UserLogoutView(LogoutView):
@@ -38,7 +37,9 @@ class RegisterView(SuccessMessageMixin, TitleMixin, CreateView):
     form_class = UserRegisterForm
     template_name = 'users/register.html'
     success_url = reverse_lazy('users:login')
-    success_message = 'You have been successfully registered!'
+    success_message = 'Your account has been successfully created. ' \
+                      'To complete registration check your email and follow the link inside. ' \
+                      'If you do not see the email - check the spam folder.'
 
 
 class ProfileView(LoginRequiredMixin, SuccessMessageMixin, TitleMixin, UpdateView):
@@ -56,3 +57,31 @@ class ProfileView(LoginRequiredMixin, SuccessMessageMixin, TitleMixin, UpdateVie
         context = super().get_context_data(**kwargs)
         context['cart_items'] = CartItem.objects.filter(user=self.object)
         return context
+
+
+class EmailVerificationView(TitleMixin, TemplateView):
+    template_name = 'users/email_verification.html'
+    title = 'Store - email verification'
+    extra_context = {
+        'header': 'Congratulations',
+        'content': 'Your account has been successfully verified!',
+    }
+
+    def get(self, request, *args, **kwargs):
+        user = get_object_or_404(User, pk=kwargs.get('pk'))
+        email_verify_queryset = EmailVerification.objects.filter(user=user, code=kwargs.get('uuid'))
+        if email_verify_queryset.exists():
+            email_verify_obj = email_verify_queryset.last()
+            if email_verify_obj.is_expired:
+                email_verify_obj = EmailVerification.objects.create(user=user)
+                email_verify_obj.send_verification_email()
+                self.extra_context = {
+                    'header': 'This link is expired',
+                    'content': 'We have sent you a new one, check your email.',
+                }
+            else:
+                user.is_verified_email = True
+                user.save()
+            return super().get(request, *args, **kwargs)
+        else:
+            return redirect('index')

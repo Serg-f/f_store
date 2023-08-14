@@ -25,6 +25,7 @@ SECRET_KEY = 'django-insecure-0l2gq!!0gmo-0hncufm!e^af+#%vf3#s=bjadv3*i)chj_24(e
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+DOMAIN_NAME = 'http://127.0.0.1:8000'
 
 # Application definition
 
@@ -130,3 +131,12 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# sending email
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'commonemail2077@gmail.com'
+EMAIL_HOST_PASSWORD = 'irvuvpcyrshyrbgs'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
