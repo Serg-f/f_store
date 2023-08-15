@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views.generic import ListView, TemplateView
 
 from .models import CartItem, ProdCategory, Product
@@ -34,7 +35,8 @@ def cart_add(request, product_id):
     cart_item.quantity += 1
     cart_item.save()
     messages.success(request, f'{cart_item.product.name} added to cart.')
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    referer = request.META.get('HTTP_REFERER', reverse('products:category', args=(0,)))
+    return HttpResponseRedirect(referer)
 
 
 @login_required
