@@ -1,6 +1,6 @@
 [
   {
-    "model": "products.products",
+    "model": "products.product",
     "pk": 1,
     "fields": {
       "name": "Adidas Originals Black Monogram Hoodie",
@@ -12,7 +12,7 @@
     }
   },
   {
-    "model": "products.products",
+    "model": "products.product",
     "pk": 2,
     "fields": {
       "name": "The North Face blue jacket",
@@ -24,11 +24,11 @@
     }
   },
   {
-    "model": "products.products",
+    "model": "products.product",
     "pk": 3,
     "fields": {
       "name": "ASOS DESIGN oversized sports top in brown",
-      "description": "Материал с плюшевой текстурой. Удобный и мягкий.",
+      "description": "Plush material. Comfortable and soft.",
       "image": "prod_images/Brown-sports-oversized-top-ASOS-DESIGN.png",
       "price": "40.00",
       "quantity": 10,
@@ -36,7 +36,7 @@
     }
   },
   {
-    "model": "products.products",
+    "model": "products.product",
     "pk": 4,
     "fields": {
       "name": "Nike Black Heritage Backpack",
@@ -48,7 +48,7 @@
     }
   },
   {
-    "model": "products.products",
+    "model": "products.product",
     "pk": 5,
     "fields": {
       "name": "Dr Martens 1461 Bex Black 3-Eye Platform Shoes",
@@ -60,7 +60,7 @@
     }
   },
   {
-    "model": "products.products",
+    "model": "products.product",
     "pk": 6,
     "fields": {
       "name": "ASOS DESIGN wide leg tailored trousers in navy",
