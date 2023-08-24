@@ -1,8 +1,9 @@
 from http import HTTPStatus
-from .models import Product, ProdCategory
 
 from django.test import TestCase
 from django.urls import reverse
+
+from .models import ProdCategory, Product
 
 
 class IndexViewTestCase(TestCase):
