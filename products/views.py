@@ -15,7 +15,7 @@ class IndexView(TemplateView):
 
 class ProductsView(ListView):
     template_name = 'products/products.html'
-    paginate_by = 3
+    paginate_by = 6
 
     def get_queryset(self):
         self.cat_selected = get_object_or_404(ProdCategory, **self.kwargs) if self.kwargs.get('pk') else None
