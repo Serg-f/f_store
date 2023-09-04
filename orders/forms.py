@@ -12,6 +12,9 @@ class SetHtmlClassMixin(forms.Form):
 
 
 class OrderForm(SetHtmlClassMixin, forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['address'].widget.attrs['placeholder'] = 'Input your address here'
 
     class Meta:
         model = Order

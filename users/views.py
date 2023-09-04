@@ -53,11 +53,6 @@ class ProfileView(LoginRequiredMixin, SuccessMessageMixin, TitleMixin, UpdateVie
     def get_object(self, queryset=None):
         return self.request.user
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['cart_items'] = CartItem.objects.filter(user=self.object)
-        return context
-
 
 class EmailVerificationView(TitleMixin, TemplateView):
     template_name = 'users/email_verification.html'

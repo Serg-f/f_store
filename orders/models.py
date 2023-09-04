@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 
+
 class Order(models.Model):
     CREATED = 0
     PAID = 1
@@ -19,5 +20,9 @@ class Order(models.Model):
     email = models.EmailField(max_length=64)
     address = models.CharField(max_length=128)
     create = models.DateTimeField(auto_now_add=True)
+    cart_history = models.JSONField(default=dict)
     status = models.PositiveSmallIntegerField(choices=STATUSES, default=CREATED)
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'Order #{self.id} for {self.first_name} {self.last_name}'
