@@ -26,3 +26,16 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Order #{self.id} for {self.first_name} {self.last_name}'
+
+    def update_after_payment(self):
+        items = self.user.cartitem_set.all()
+        self.status = self.PAID
+        self.cart_history = {
+            'items': [item.get_dict() for item in items],
+            'total_cost': str(items.total_cost()),
+        }
+        self.save()
+        items.delete()
+
+    def get_status(self):
+        return dict(self.STATUSES).get(self.status)

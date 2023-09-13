@@ -1,5 +1,5 @@
 {% extends 'products/base.html' %}
-{% load static %}
+{% load static humanize %}
 
 {% block css %}
     <link href="{% static '/vendor/css/orders.css' %}" rel="stylesheet">
@@ -7,45 +7,32 @@
 
 {% block content %}
     <div class="text-center mt-5">
-            <h1>Заказ №12345</h1>
+            <h1>{{ title }}</h1>
             <div class="orders mt-5">
                 <table class="table">
                     <thead>
                     <tr>
-                        <th scope="col">Название</th>
-                        <th scope="col">Кол-во</th>
-                        <th scope="col">Цена</th>
-                        <th scope="col">Сумма</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Cost</th>
                     </tr>
                     </thead>
                     <tbody>
+                    {% for item in object.cart_history.items %}
                     <tr>
-                        <th scope="row">
-                            Худи черного цвета с монограммами adidas Originals
-                        </th>
-                        <td>1</td>
-                        <td>6 090,00 руб.</td>
-                        <td>6 090,00 руб.</td>
+                        <th scope="row">{{ item.name }}</th>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.price|intcomma }} €</td>
+                        <td>{{ item.cost|intcomma }} €</td>
                     </tr>
-                    <tr>
-                        <th scope="row">
-                            Синяя куртка The North Face
-                        </th>
-                        <td>1</td>
-                        <td>23 725,00 руб.</td>
-                        <td>23 725,00 руб.</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">
-                            Коричневый спортивный oversized-топ ASOS DESIGN
-                        </th>
-                        <td>2</td>
-                        <td>3 390,00 руб.</td>
-                        <td>6 780,00 руб.</td>
-                    </tr>
+
+                    {% endfor %}
+
+
                     </tbody>
                 </table>
-                <p class="float-right h4 mt-3">Итого 36 595,00 руб.</p>
+                <p class="float-right h4 mt-3">Total {{ object.cart_history.total_cost|intcomma }} €</p>
             </div>
         </div>
 {% endblock %}

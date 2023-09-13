@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-0l2gq!!0gmo-0hncufm!e^af+#%vf3#s=bjadv3*i)chj_24(e
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-DOMAIN_NAME = 'http://127.0.0.1:8000'
+DOMAIN_NAME = 'https://2853-84-62-246-64.ngrok-free.app'
+# DOMAIN_NAME = 'http://127.0.0.1:8000'
 
 # Application definition
 
@@ -132,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Berlin'
 
 USE_I18N = True
 
@@ -189,3 +190,9 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 SOCIALACCOUNT_QUERY_EMAIL = True
+
+# Stripe
+STRIPE_PUBLIC_KEY = 'pk_test_51NmzyhDf46bKHZ5z4k1pjLYxHZvS5n71IBP98cJHBfBLvZgqbYFKVkF4arZKmhmzFU0wzEYHU5pB1itMXGgYSyaH00AVY0kVtm'
+STRIPE_SECRET_KEY = 'sk_test_51NmzyhDf46bKHZ5z0KqFyVTxKX5e7rtv71biqXim0XoGKfyTSDFO0rufFUSZkUsynvS6YUdR24pDFDeZF4L8Yih600Uw572kVH'
+STRIPE_WEBHOOK_SECRET = 'whsec_1o4HtYunjxSpKtm5OV6xW9zbhdXrXwGU'
+# STRIPE_WEBHOOK_SECRET = 'whsec_3eec64acd85a78f9c3f18513419651cdac7302fc715cc89bf9ab17437219f33d'

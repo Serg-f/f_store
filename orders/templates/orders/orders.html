@@ -6,50 +6,40 @@
 {% endblock %}
 
 {% block content %}
-     <div class="text-center mt-5">
-            <h1>Заказы</h1>
-            <div class="orders mt-5">
-                <table class="table">
-                    <thead>
-                    <tr class="table-light">
-                        <th scope="col">#</th>
-                        <th scope="col">Статус</th>
-                        <th scope="col">Создан</th>
-                        <th scope="col">Итого</th>
-                        <th scope="col">Действие</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Оплачен</td>
-                        <td>21 авг. 21 года</td>
-                        <td>5 070 руб.</td>
+    <div class="text-center mt-5">
+        <h1>{{ title }}</h1>
+        <div class="orders mt-5">
+            <table class="table">
+                <thead>
+                <tr class="table-light">
+                    <th scope="col">#</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in object_list %}
+                    <tr class="{% if order.get_status == 'Delivered' %}table-success
+                        {% elif order.get_status == 'On the way' %}table-info
+                        {% elif order.get_status == 'Created' %}table-warning
+                        {% elif order.get_status == 'Paid' %}table-secondary
+                        {% elif order.get_status == 'Canceled' %}table-danger
+                        {% endif %}">
+                        <th scope="row">{{ order.id }}</th>
+                        <td>{{ order.get_status }}</td>
+                        <td>{{ order.create }}</td>
+                        <td>{{ order.cart_history.total_cost }} €</td>
                         <td>
-                            <a href="order.html">просмотреть</a>
+                            <a href="{% url 'orders:order_detail' order.id %}">view</a>
                         </td>
                     </tr>
-                    <tr class="table-success">
-                        <th scope="row">2</th>
-                        <td>Досталвен</td>
-                        <td>16 июля 21 года</td>
-                        <td>4 876 руб.</td>
-                        <td>
-                            <a href="order.html">просмотреть</a>
-                        </td>
-                    </tr>
-                    <tr class="table-info">
-                        <th scope="row">3</th>
-                        <td>В пути</td>
-                        <td>14 нояб. 21 года</td>
-                        <td>9 566 руб.</td>
-                        <td>
-                            <a href="order.html">просмотреть</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+                {% endfor %}
+
+                </tbody>
+            </table>
         </div>
+    </div>
 {% endblock %}
 

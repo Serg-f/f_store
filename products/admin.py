@@ -12,7 +12,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('category', 'price', 'quantity')
     search_fields = ('name',)
     readonly_fields = ('get_html_photo_edit',)
-    fields = ('name', 'description', 'image', 'get_html_photo_edit', 'price', 'quantity', 'category')
+    fields = ('name', 'description', 'image', 'get_html_photo_edit', 'price', 'stripe_price_id', 'quantity', 'category')
 
     def get_html_photo(self, obj):
         if obj.image:
