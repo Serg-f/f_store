@@ -1,5 +1,5 @@
 {% extends 'products/base.html' %}
-{% load static %}
+{% load static humanize %}
 
 {% block css %}
     <link href="{% static '/vendor/css/orders.css' %}" rel="stylesheet">
@@ -21,15 +21,15 @@
                 </thead>
                 <tbody>
                 {% for order in object_list %}
-                    <tr class="{% if order.get_status == 'Delivered' %}table-success
-                        {% elif order.get_status == 'On the way' %}table-info
-                        {% elif order.get_status == 'Created' %}table-warning
-                        {% elif order.get_status == 'Paid' %}table-secondary
-                        {% elif order.get_status == 'Canceled' %}table-danger
+                    <tr class="{% if order.get_status_display == 'Delivered' %}table-success
+                        {% elif order.get_status_display == 'On the way' %}table-info
+                        {% elif order.get_status_display == 'Created' %}table-warning
+                        {% elif order.get_status_display == 'Paid' %}table-secondary
+                        {% elif order.get_status_display == 'Canceled' %}table-danger
                         {% endif %}">
                         <th scope="row">{{ order.id }}</th>
-                        <td>{{ order.get_status }}</td>
-                        <td>{{ order.create }}</td>
+                        <td>{{ order.get_status_display }}</td>
+                        <td>{{ order.create|naturaltime }}</td>
                         <td>{{ order.cart_history.total_cost }} €</td>
                         <td>
                             <a href="{% url 'orders:order_detail' order.id %}">view</a>

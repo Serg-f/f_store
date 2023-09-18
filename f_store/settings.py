@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-0l2gq!!0gmo-0hncufm!e^af+#%vf3#s=bjadv3*i)chj_24(e
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-DOMAIN_NAME = 'https://2853-84-62-246-64.ngrok-free.app'
+DOMAIN_NAME = 'https://dbff-84-62-246-64.ngrok-free.app'
 # DOMAIN_NAME = 'http://127.0.0.1:8000'
 
 # Application definition
@@ -37,12 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
+    # 'django.contrib.sites',
     'django.contrib.humanize',
 
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.yandex',
+    'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.github',
     'debug_toolbar',
 
@@ -60,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'f_store.urls'
@@ -97,7 +101,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # DATABASES = {
 #     "default": {
@@ -178,14 +181,28 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-SITE_ID = 1
-
+# SITE_ID = 1
+# http://127.0.0.1:8000/accounts/github/login/callback/
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
         'SCOPE': [
-            'user',
+            'read:user',
             'user:email',
         ],
+        'APP': {
+            'client_id': 'f33c928c32d7cce95337',
+            'secret': '469faae4cd621e869e61d509db8b97d73ee0040b',
+        }
+    },
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
     }
 }
 
@@ -194,5 +211,5 @@ SOCIALACCOUNT_QUERY_EMAIL = True
 # Stripe
 STRIPE_PUBLIC_KEY = 'pk_test_51NmzyhDf46bKHZ5z4k1pjLYxHZvS5n71IBP98cJHBfBLvZgqbYFKVkF4arZKmhmzFU0wzEYHU5pB1itMXGgYSyaH00AVY0kVtm'
 STRIPE_SECRET_KEY = 'sk_test_51NmzyhDf46bKHZ5z0KqFyVTxKX5e7rtv71biqXim0XoGKfyTSDFO0rufFUSZkUsynvS6YUdR24pDFDeZF4L8Yih600Uw572kVH'
-STRIPE_WEBHOOK_SECRET = 'whsec_1o4HtYunjxSpKtm5OV6xW9zbhdXrXwGU'
-# STRIPE_WEBHOOK_SECRET = 'whsec_3eec64acd85a78f9c3f18513419651cdac7302fc715cc89bf9ab17437219f33d'
+STRIPE_WEBHOOK_SECRET = 'whsec_1o4HtYunjxSpKtm5OV6xW9zbhdXrXwGU'  # global
+# STRIPE_WEBHOOK_SECRET = 'whsec_3eec64acd85a78f9c3f18513419651cdac7302fc715cc89bf9ab17437219f33d' # local

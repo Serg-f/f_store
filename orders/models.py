@@ -37,5 +37,3 @@ class Order(models.Model):
         self.save()
         items.delete()
 
-    def get_status(self):
-        return dict(self.STATUSES).get(self.status)

@@ -1,5 +1,5 @@
 {% extends 'products/base.html' %}
-{% load static humanize %}
+{% load static %}
 
 {% block css %}
     <link href="{% static '/vendor/css/orders.css' %}" rel="stylesheet">
@@ -23,8 +23,8 @@
                     <tr>
                         <th scope="row">{{ item.name }}</th>
                         <td>{{ item.quantity }}</td>
-                        <td>{{ item.price|intcomma }} €</td>
-                        <td>{{ item.cost|intcomma }} €</td>
+                        <td>{{ item.price }} €</td>
+                        <td>{{ item.cost }} €</td>
                     </tr>
 
                     {% endfor %}
@@ -32,7 +32,7 @@
 
                     </tbody>
                 </table>
-                <p class="float-right h4 mt-3">Total {{ object.cart_history.total_cost|intcomma }} €</p>
+                <p class="float-right h4 mt-3">Total {{ object.cart_history.total_cost }} €</p>
             </div>
         </div>
 {% endblock %}
