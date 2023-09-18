@@ -80,6 +80,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'products.context_processors.cart_items',
+
             ],
         },
     },
@@ -190,8 +191,12 @@ SOCIALACCOUNT_PROVIDERS = {
             'user:email',
         ],
         'APP': {
+            # local
             'client_id': 'f33c928c32d7cce95337',
             'secret': '469faae4cd621e869e61d509db8b97d73ee0040b',
+            # global
+            # 'client_id': '5fcbf758911d8fff2af2',
+            # 'secret': '0e6d7c4fbbbc1d8a53a0b0cf0c74877e14025a6c',
         }
     },
     'google': {
@@ -203,6 +208,10 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'OAUTH_PKCE_ENABLED': True,
+        'APP': {
+            'client_id': '841036926280-382es57l4p6d3od3pel3gu419sf3ffb6.apps.googleusercontent.com',
+            'secret': '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',
+        }
     }
 }
 
