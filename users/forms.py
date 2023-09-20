@@ -24,7 +24,7 @@ class UserLoginForm(SetHtmlClassMixin, AuthenticationForm):
     def confirm_login_allowed(self, user):
         super().confirm_login_allowed(user)
         if not user.is_verified_email:
-            raise ValidationError("To login please confirm your email first")
+            raise ValidationError("To login please verify your email first")
 
     class Meta:
         model = User
@@ -63,6 +63,9 @@ class UserProfileForm(SetHtmlClassMixin, UserChangeForm):
         self.fields['username'].disabled = True
         self.fields['username'].label = 'User name'
         self.fields['email'].disabled = True
+        self.fields['first_name'].widget.attrs['placeholder'] = 'Enter your first name'
+        self.fields['last_name'].widget.attrs['placeholder'] = 'Enter your last name'
+
 
     class Meta:
         model = User
@@ -79,4 +82,8 @@ class UserProfileForm(SetHtmlClassMixin, UserChangeForm):
                 'type': 'date',
                 'class': 'form-control',
             }),
+            'address': forms.TextInput(attrs={
+                'class': "form-control",
+                'placeholder': "Enter your address",
+            })
         }

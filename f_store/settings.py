@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-0l2gq!!0gmo-0hncufm!e^af+#%vf3#s=bjadv3*i)chj_24(e
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-DOMAIN_NAME = 'https://dbff-84-62-246-64.ngrok-free.app'
-# DOMAIN_NAME = 'http://127.0.0.1:8000'
+# DOMAIN_NAME = 'https://dbff-84-62-246-64.ngrok-free.app'
+DOMAIN_NAME = 'http://127.0.0.1:8000'
 
 # Application definition
 

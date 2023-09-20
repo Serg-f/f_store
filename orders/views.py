@@ -28,7 +28,7 @@ class CancelView(LoginRequiredMixin, RedirectView):
 
     def get(self, request, *args, **kwargs):
         order = request.user.order_set.last()
-        if order.get_status() == 'Created':
+        if order.get_status_display() == 'Created':
             order.delete()
         return super().get(request, *args, **kwargs)
 
@@ -62,14 +62,18 @@ class CreateOrderView(LoginRequiredMixin, TitleMixin, CreateView):
 
     def get(self, request, *args, **kwargs):
         self.object = None
-        fields = ('first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name', 'email', 'address')
         context = {field: getattr(self.request.user, field) for field in fields}
         context_data = self.get_context_data()
         context_data.update({'form': self.form_class(initial=context)})
         return self.render_to_response(context_data)
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        user = form.instance.user = self.request.user
+        fields = ('first_name', 'last_name', 'address')
+        for field in fields:
+            setattr(user, field, form.cleaned_data[field])
+        user.save()
         return super().form_valid(form)
 
 

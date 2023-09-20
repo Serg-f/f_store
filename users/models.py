@@ -19,7 +19,7 @@ class User(AbstractUser):
     gender = models.CharField(max_length=1, choices=GENDERS, default='m')
     birthday = models.DateField(blank=True, null=True, default=None)
     email = models.EmailField(unique=True)
-    address = models.CharField(max_length=256)
+    address = models.CharField(max_length=256, blank=True)
     is_verified_email = models.BooleanField(default=False)
 
 
