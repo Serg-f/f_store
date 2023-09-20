@@ -40,6 +40,18 @@ def cart_add(request, product_id):
 
 
 @login_required
+def cart_minus(request, product_id):
+    kwargs = {'user': request.user, 'product_id': product_id}
+    if CartItem.objects.filter(**kwargs).exists():
+        cart_item = CartItem.objects.get(**kwargs)
+        cart_item.quantity -= 1
+        if cart_item.quantity:
+            cart_item.save()
+        else:
+            cart_item.delete()
+
+
+@login_required
 def cart_remove(request, cart_item_id):
     CartItem(id=cart_item_id).delete()
     return HttpResponseRedirect(request.META['HTTP_REFERER'])

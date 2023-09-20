@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, UpdateView
 from django.views.generic.base import ContextMixin, TemplateView
 
@@ -24,6 +24,26 @@ class UserLoginView(SuccessMessageMixin, TitleMixin, LoginView):
     template_name = 'users/login.html'
     form_class = UserLoginForm
     success_message = 'Welcome, %(username)s!\nYou have been successfully logged in.'
+
+    def get(self, request, *args, **kwargs):
+        # Store the referrer URL in the session if it's not the login page itself
+        referrer = request.META.get('HTTP_REFERER')
+        if referrer and not referrer.endswith(reverse('users:login')):
+            request.session['referrer_url_before_login'] = referrer
+        return super().get(request, *args, **kwargs)
+
+    def get_success_url(self):
+        # Get the value of 'next' from POST data
+        next_url = self.request.POST.get('next')
+        # If 'next' is provided and is not empty, use it as the redirect URL
+        if next_url:
+            return next_url
+        # If there's a stored referrer URL in the session, use it
+        if 'referrer_url_before_login' in self.request.session:
+            referrer_url = self.request.session.pop('referrer_url_before_login')
+            return referrer_url
+        # Otherwise, use the default success URL (e.g., user's profile or homepage)
+        return super().get_success_url()
 
 
 class UserLogoutView(LogoutView):

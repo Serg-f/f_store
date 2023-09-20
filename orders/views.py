@@ -1,6 +1,8 @@
 import stripe
 import logging
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -21,7 +23,7 @@ class SuccessView(TitleMixin, TemplateView):
     template_name = 'orders/success.html'
 
 
-class CancelView(RedirectView):
+class CancelView(LoginRequiredMixin, RedirectView):
     pattern_name = 'orders:create_order'
 
     def get(self, request, *args, **kwargs):
@@ -31,11 +33,12 @@ class CancelView(RedirectView):
         return super().get(request, *args, **kwargs)
 
 
-class CreateOrderView(TitleMixin, CreateView):
+class CreateOrderView(LoginRequiredMixin, TitleMixin, CreateView):
     title = 'Checkout'
     template_name = 'orders/order-create.html'
     form_class = OrderForm
     success_url = reverse_lazy('orders:create_order')
+    login_required()
 
     def post(self, request, *args, **kwargs):
         self.object = None
@@ -70,7 +73,7 @@ class CreateOrderView(TitleMixin, CreateView):
         return super().form_valid(form)
 
 
-class OrdersListView(TitleMixin, ListView):
+class OrdersListView(LoginRequiredMixin, TitleMixin, ListView):
     title = 'Orders'
     template_name = 'orders/orders.html'
     ordering = ('-id',)
@@ -79,7 +82,7 @@ class OrdersListView(TitleMixin, ListView):
         return self.request.user.order_set.order_by(*self.ordering)
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(LoginRequiredMixin, DetailView):
     model = Order
     template_name = 'orders/order.html'
 

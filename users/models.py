@@ -14,12 +14,12 @@ class User(AbstractUser):
     GENDERS = [
         ('m', 'Male'),
         ('f', 'Female'),
-        ('o', 'I am an alien'),
     ]
     image = models.ImageField(upload_to='users_image', null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDERS, default='m')
     birthday = models.DateField(blank=True, null=True, default=None)
     email = models.EmailField(unique=True)
+    address = models.CharField(max_length=256)
     is_verified_email = models.BooleanField(default=False)
 
 
@@ -42,7 +42,7 @@ class EmailVerification(models.Model):
     def send_verification_email(self):
         subject = f'F-Store: account verification for {self.user.username}'
         link = DOMAIN_NAME + reverse('users:verify', kwargs={'pk': self.user_id, 'uuid': self.code})
-        message = f'To verify an account for "{self.user.email}" follow the link: {link}'
+        message = f'To complete account registration for "{self.user.email}" follow the link: {link}'
         send_mail(
             subject=subject,
             message=message,

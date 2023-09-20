@@ -66,7 +66,7 @@ class UserProfileForm(SetHtmlClassMixin, UserChangeForm):
 
     class Meta:
         model = User
-        fields = ('image', 'first_name', 'last_name', 'username', 'email', 'gender', 'birthday',)
+        fields = ('image', 'first_name', 'last_name', 'username', 'email', 'gender', 'birthday', 'address')
         widgets = {
             'image': forms.FileInput(attrs={
                 'class': 'custom-file-input',
