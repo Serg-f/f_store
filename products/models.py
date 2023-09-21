@@ -79,6 +79,7 @@ class CartItem(models.Model):
 
     def get_dict(self):
         return {
+            'id': self.product.id,
             'name': self.product.name,
             'quantity': self.quantity,
             'price': str(self.product.price),

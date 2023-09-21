@@ -1,3 +1,5 @@
+import time
+from threading import Thread
 import stripe
 import logging
 from django.conf import settings
@@ -91,7 +93,8 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     template_name = 'orders/order.html'
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs, **{'title': f'Order №{self.object.id}'})
+        add_kwargs = {'title': f'Order №{self.object.id} status: {self.object.get_status_display()}'}
+        return super().get_context_data(**kwargs, **add_kwargs)
 
 
 @csrf_exempt
@@ -119,11 +122,24 @@ def stripe_webhook_view(request):
         )
 
         # Fulfill the purchase...
-        fulfill_order(session.metadata)
+        thread = Thread(target=fulfill_order, args=(session.metadata,))
+        thread.start()
 
     # Passed signature verification
     return HttpResponse(status=200)
 
 
 def fulfill_order(metadata):
-    Order.objects.get(id=int(metadata.order_id)).update_after_payment()
+    order = Order.objects.get(id=int(metadata.order_id))
+    order.update_after_payment()
+    order.send_user_order_status_email()
+    time.sleep(150)
+
+    order.status = 2
+    order.save()
+    order.send_user_order_status_email()
+    time.sleep(150)
+
+    order.status = 3
+    order.save()
+    order.send_user_order_status_email()

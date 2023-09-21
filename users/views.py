@@ -29,7 +29,8 @@ class UserLoginView(SuccessMessageMixin, TitleMixin, LoginView):
         # Store the referrer URL in the session if it's not the login page itself
         referrer = request.META.get('HTTP_REFERER')
         if referrer and not referrer.endswith(reverse('users:login')) and \
-                not referrer.endswith(reverse('users:register')):
+                not referrer.endswith(reverse('users:register')) and \
+                r'/users/verify/' not in referrer:
             request.session['referrer_url_before_login'] = referrer
         return super().get(request, *args, **kwargs)
 

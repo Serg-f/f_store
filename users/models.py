@@ -7,7 +7,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
 
-from f_store.settings import DOMAIN_NAME
+from f_store.settings import DOMAIN_NAME, EMAIL_HOST_USER
 
 
 class User(AbstractUser):
@@ -42,11 +42,11 @@ class EmailVerification(models.Model):
     def send_verification_email(self):
         subject = f'F-Store: account verification for {self.user.username}'
         link = DOMAIN_NAME + reverse('users:verify', kwargs={'pk': self.user_id, 'uuid': self.code})
-        message = f'To complete account registration for "{self.user.email}" follow the link: {link}'
+        message = f'To complete account registration for "{self.user.email}" follow the link: \n{link}'
         send_mail(
             subject=subject,
             message=message,
-            from_email="commonemail2077@gmail.com",
+            from_email=EMAIL_HOST_USER,
             recipient_list=[self.user.email],
             fail_silently=False,
         )

@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-0l2gq!!0gmo-0hncufm!e^af+#%vf3#s=bjadv3*i)chj_24(e
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-# DOMAIN_NAME = 'https://dbff-84-62-246-64.ngrok-free.app'
-DOMAIN_NAME = 'http://127.0.0.1:8000'
+DOMAIN_NAME = 'https://5b8c-94-216-13-203.ngrok-free.app'
+# DOMAIN_NAME = 'http://127.0.0.1:8000'
 
 # Application definition
 
@@ -167,7 +167,6 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 # sending email
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
