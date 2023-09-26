@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic import ListView, TemplateView
+from django.http import JsonResponse
 
 from .models import CartItem, ProdCategory, Product
 
@@ -30,28 +31,48 @@ class ProductsView(ListView):
 
 
 @login_required
-def cart_add(request, product_id):
-    cart_item = CartItem.objects.get_or_create(user=request.user, product_id=product_id)[0]
-    cart_item.quantity += 1
-    cart_item.save()
-    messages.success(request, f'{cart_item.product.name} added to cart.')
-    referer = request.META.get('HTTP_REFERER', reverse('products:category', args=(0,)))
-    return HttpResponseRedirect(referer)
-
-
-@login_required
-def cart_minus(request, product_id):
-    kwargs = {'user': request.user, 'product_id': product_id}
-    if CartItem.objects.filter(**kwargs).exists():
+def update_cart(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        cart_item_id = request.POST.get('cart_item_id')
+        kwargs = {'id': cart_item_id, 'user': request.user}
+        if not CartItem.objects.filter(**kwargs).exists():
+            return JsonResponse({'status': 'error'})
         cart_item = CartItem.objects.get(**kwargs)
-        cart_item.quantity -= 1
-        if cart_item.quantity:
-            cart_item.save()
-        else:
+
+        if action == 'add':
+            cart_item.quantity += 1
+        elif action == 'minus':
+            cart_item.quantity -= 1
+            if cart_item.quantity == 0:
+                cart_item.delete()
+                return JsonResponse({'status': 'success', 'action': 'minus'})
+        elif action == 'remove':
             cart_item.delete()
+            return JsonResponse({'status': 'success', 'action': 'remove'})
+
+        cart_item.save()
+        return JsonResponse({
+            'status': 'success',
+            'action': action,
+        })
+    return JsonResponse({'status': 'error'})
 
 
 @login_required
-def cart_remove(request, cart_item_id):
-    CartItem(id=cart_item_id).delete()
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+def add_cart_item(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        kwargs = {'product_id': product_id, 'user': request.user}
+        if CartItem.objects.filter(**kwargs).exists():
+            item = CartItem.objects.get(**kwargs)
+            item.quantity += 1
+            item.save()
+        else:
+            CartItem.objects.create(**kwargs, quantity=1)
+        return JsonResponse({
+            'status': 'success',
+            'action': request.POST.get('action')
+        })
+    else:
+        return JsonResponse({'status': 'error'})

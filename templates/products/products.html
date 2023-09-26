@@ -75,14 +75,14 @@
                                     <p class="card-text">{{ prod.description }}</p>
                                 </div>
                                 <div class="card-footer text-center">
-                                    <a href="{% url 'products:cart_add' prod.id %}">
-                                        <button type="button" class="btn btn-outline-success">Add to cart</button>
-                                    </a>
+                                    <button onclick="createCartItem({{ prod.id }})" type="button"
+                                            class="btn btn-outline-success">Add to cart
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        {% empty %}
-                            <div class="no_goods">No goods in this category</div>
+                    {% empty %}
+                        <div class="no_goods">No goods in this category</div>
                     {% endfor %}
 
                 </div>
@@ -127,6 +127,31 @@
         </div>
 
     </div>
+    <script>
+        function updateCartByProdId(productId, action) {
+            $.ajax({
+                url: "{% url 'products:add_cart_item' %}",
+                type: "POST",
+                data: {
+                    'product_id': productId,
+                    'action': action,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status == 'success') {
+                        //pass
+                    }
+                }
+
+            });
+        }
+
+        function createCartItem(productId) {
+            updateCartByProdId(productId, 'create')
+        }
+
+    </script>
 {% endblock %}
 
 <!-- Footer -->
@@ -139,3 +164,4 @@
         <!-- /.container -->
     </footer>
 {% endblock %}
+
