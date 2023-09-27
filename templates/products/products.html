@@ -60,7 +60,7 @@
                 <div class="row">
                     {% for prod in product_list %}
 
-                        <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="col-lg-4 col-md-6 mb-4" data-product-id="{{ prod.id }}">
                             <div class="card h-100">
                                 <a href="#">
                                     <img class="card-img-top"
@@ -148,8 +148,20 @@
         }
 
         function createCartItem(productId) {
-            updateCartByProdId(productId, 'create')
+            updateCartByProdId(productId, 'create');
+
+            // Add animation class to the product card
+            let productCard = document.querySelector(`[data-product-id="${productId}"]`);
+            if (productCard) {
+                productCard.classList.add('product-added');
+
+                // Remove the animation class after 0.5s to reset the animation
+                setTimeout(() => {
+                    productCard.classList.remove('product-added');
+                }, 500);
+            }
         }
+
 
     </script>
 {% endblock %}

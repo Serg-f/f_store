@@ -1,0 +1,17 @@
+/* Dropdown Cart Styling */
+.dropdown-menu {
+    width: 250px; /* Adjust width as needed */
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.dropdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Show dropdown on hover */
+.navbar-nav li:hover .dropdown-menu {
+    display: block;
+}
