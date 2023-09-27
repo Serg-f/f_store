@@ -15,3 +15,43 @@
 .navbar-nav li:hover .dropdown-menu {
     display: block;
 }
+
+/* Dropdown Cart Styling */
+.cart-items {
+    width: 400px; /* Further increased width */
+    overflow: hidden; /* Ensure no scrollbars */
+}
+
+.cart-item {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.cart-item-name {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.cart-item-controls {
+    display: flex;
+    align-items: center;
+}
+
+.cart-item-controls .btn,
+.cart-item-controls input {
+    margin: 0 5px;
+    width: 50px; /* Increased width to fit 2 digits */
+}
+
+.cart-item-cost {
+    margin-right: 15px; /* Increased margin */
+}
+
+.cart-item .fas.fa-trash {
+    margin-left: 15px; /* Added margin */
+}
+
+.cart-total {
+    padding: 10px;
+    font-weight: bold;
+}
