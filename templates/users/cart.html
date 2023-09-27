@@ -17,7 +17,7 @@
                             <button class="btn btn-outline-secondary" onclick="decrementQuantity({{ cart_item.id }})">
                                 -
                             </button>
-                            <div class="col-lg-4">
+                            <div class="col-lg-4 custom-cart-width">
                                 <input name="basketID" type="text" class="form-control" value="{{ cart_item.quantity }}"
                                        readonly data-cart-item-id="{{ cart_item.id }}">
                             </div>
@@ -29,11 +29,11 @@
                                  class="col-lg-4">{{ cart_item.cost|floatformat:"-2" }}
                                 €
                             </div>
-                            <div class="col-lg-4">
+
                                 <a href="#" onclick="removeCartItem({{ cart_item.id }})">
                                     <i class="fas fa-trash"></i>
                                 </a>
-                            </div>
+
                         </div>
                     </li>
                 </ul>

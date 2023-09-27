@@ -1,0 +1,37 @@
+/* cart-custom.css */
+
+/* Add space outside <div class="row text-center"> */
+.row.text-center {
+    padding-left: 15px;  /* Space on the left */
+    padding-right: 15px; /* Space on the right */
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* Adjust width for <div class="col-lg-4 custom-cart-width"> and its containing input */
+.col-lg-4.custom-cart-width {
+    flex: 0 0 50px; /* Set to the width of the input */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the input within the div */
+}
+
+.col-lg-4.custom-cart-width input.form-control {
+    width: 50px;
+}
+
+/* Make '-' and '+' button width the same */
+.btn-outline-secondary {
+    width: 40px;
+}
+
+/* Adjusting the trash button positioning */
+.row.text-center .fas.fa-trash {
+    margin-left: 10px;
+}
+
+/* Adjusting the cost value positioning */
+.row.text-center [cart-cost-id] {
+    margin-right: 10px;
+}
