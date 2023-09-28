@@ -42,8 +42,8 @@
 
                 <!-- New Cart Dropdown -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="{% url 'users:profile' %}" id="cartDropdown" role="button"
-                       aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="cartDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-shopping-cart"></i> Cart
                     </a>
                     <div class="dropdown-menu" aria-labelledby="cartDropdown">
@@ -51,24 +51,31 @@
                         <div class="cart-items">
                             {% for cart_item in cart_items %}
                                 <div class="cart-item" data-cart-item-id="{{ cart_item.id }}">
-                                    <span class="cart-item-name">{{ cart_item.product.name }}</span>
-                                    <div class="cart-item-controls">
-                                        <button class="btn btn-outline-secondary"
-                                                onclick="updateCartItem({{ cart_item.id }}, 'decrease')">-
-                                        </button>
-                                        <input type="text" class="form-control" value="{{ cart_item.quantity }}"
-                                               readonly>
-                                        <button class="btn btn-outline-secondary"
-                                                onclick="updateCartItem({{ cart_item.id }}, 'increase')">+
-                                        </button>
-                                        <span class="cart-item-cost">{{ cart_item.cost|floatformat:"-2" }} €</span>
-                                        <a href="#" onclick="removeCartItem({{ cart_item.id }})"><i
-                                                class="fas fa-trash"></i></a>
+                                    <!-- Product image on the left -->
+                                    <img src="{{ cart_item.product.image.url }}" alt="{{ cart_item.product.name }}"
+                                         class="cart-item-image">
+
+                                    <!-- Product name above the controls -->
+                                    <div class="cart-item-details">
+                                        <span class="cart-item-name">{{ cart_item.product.name }}</span>
+                                        <div class="cart-item-controls">
+                                            <button class="btn btn-outline-secondary"
+                                                    onclick="updateCartItem({{ cart_item.id }}, 'decrease')">-
+                                            </button>
+                                            <input type="text" class="form-control" value="{{ cart_item.quantity }}"
+                                                   readonly>
+                                            <button class="btn btn-outline-secondary"
+                                                    onclick="updateCartItem({{ cart_item.id }}, 'increase')">+
+                                            </button>
+                                            <span class="cart-item-cost">{{ cart_item.cost|floatformat:"-2" }} €</span>
+                                            <a href="#" onclick="removeCartItem({{ cart_item.id }})"><i
+                                                    class="fas fa-trash"></i></a>
+                                        </div>
                                     </div>
                                 </div>
                             {% endfor %}
                             <div class="cart-total">
-                                Total: {{ cart_items.total_cost|floatformat:"-2" }} € <!-- Added '€' symbol -->
+                                Total: {{ cart_items.total_cost|floatformat:"-2" }} €
                             </div>
                         </div>
 
@@ -84,8 +91,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle"></i>
-                            {{ user.username }}
+                            <i class="fas fa-user-circle"></i> {{ user.username }}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li>

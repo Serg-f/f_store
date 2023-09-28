@@ -1,8 +1,10 @@
 /* Dropdown Cart Styling */
 .dropdown-menu {
-    width: 250px; /* Adjust width as needed */
-    max-height: 400px;
-    overflow-y: auto;
+    width: 400px; /* Adjust width as needed */
+    max-height: none; /* Remove max height */
+    overflow: hidden; /* Hide overflow */
+    left: 50%; /* Position the dropdown to the center of its parent */
+    transform: translateX(-60%); /* Move the dropdown to the left */
 }
 
 .dropdown-item {
@@ -44,14 +46,58 @@
 }
 
 .cart-item-cost {
-    margin-right: 15px; /* Increased margin */
+    margin-left: auto; /* Push the cost to the right */
+    margin-right: 10px; /* Space between cost and trash button */
 }
 
 .cart-item .fas.fa-trash {
-    margin-left: 15px; /* Added margin */
+    margin: 0 10px; /* Space between cost and trash button */
 }
-
 .cart-total {
     padding: 10px;
     font-weight: bold;
+}
+
+/* ... existing styles ... */
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.cart-item-image {
+    width: 80px; /* Adjust as needed */
+    height: 100px; /* Adjust as needed */
+    margin-right: 10px; /* Space between image and product name */
+    object-fit: cover; /* Ensure the image covers the entire space without distortion */
+}
+
+.cart-item-details {
+    flex: 1; /* Take up the remaining space */
+    display: flex;
+    flex-direction: column; /* Stack the name and controls vertically */
+}
+
+
+/* ... existing styles ... */
+
+/* Center-align dropdowns for mobile */
+@media (max-width: 992px) { /* Bootstrap's breakpoint for large devices */
+    .navbar-nav .dropdown-menu {
+        position: fixed; /* Make the dropdown fixed */
+        top: 60px; /* Adjust based on the height of your navbar */
+        left: 50%; /* Center the dropdown */
+        transform: translateX(-50%); /* Adjust for exact centering */
+        width: 80%; /* Set a width for the dropdown */
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for better visibility */
+    }
+}
+
+/* Disable hover effect for mobile */
+@media (max-width: 992px) { /* Bootstrap's breakpoint for large devices */
+    .navbar-nav li:hover .dropdown-menu {
+        display: none !important; /* Override any hover behavior */
+    }
 }
