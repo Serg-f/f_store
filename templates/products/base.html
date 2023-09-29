@@ -141,18 +141,6 @@
 
 {% block footer %}{% endblock %}
 
-<script>
-    function updateCartItem(cartItemId, action) {
-        // Implement the logic to update the cart item quantity
-        // You can use AJAX to communicate with the backend and update the cart
-    }
-
-    function removeCartItem(cartItemId) {
-        // Implement the logic to remove the cart item
-        // You can use AJAX to communicate with the backend and remove the item from the cart
-    }
-
-</script>
 <!-- Bootstrap core JavaScript -->
 <script src="{% static '/vendor/jquery/jquery.min.js' %}"></script>
 <script src="{% static '/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
@@ -162,7 +150,33 @@
 
 <!-- FontAwesome script -->
 <script src="{% static '/vendor/fontawesome/fontawesome-icons.js' %}" crossorigin="anonymous"></script>
+<script>
 
+    document.addEventListener("DOMContentLoaded", function () {
+        const isMobile = window.matchMedia("only screen and (max-width: 992px)").matches;
+
+        if (isMobile) {
+            console.log("Mobile device detected. Attaching event listeners...");
+
+            let dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            dropdownToggles.forEach(function (toggle) {
+                toggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    let dropdownMenu = this.nextElementSibling;
+                    if (dropdownMenu.style.display === "block") {
+                        dropdownMenu.style.display = "none";
+                        document.body.classList.remove('no-scroll');
+                    } else {
+                        dropdownMenu.style.display = "block";
+                        document.body.classList.add('no-scroll');
+                    }
+                    console.log("Dropdown toggle clicked.");
+                });
+            });
+        }
+    });
+
+</script>
 </body>
 
 

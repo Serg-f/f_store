@@ -1,8 +1,8 @@
 /* Dropdown Cart Styling */
 .dropdown-menu {
-    width: 400px; /* Adjust width as needed */
-    max-height: none; /* Remove max height */
-    overflow: hidden; /* Hide overflow */
+    width: 420px; /* Adjust width as needed */
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
     left: 50%; /* Position the dropdown to the center of its parent */
     transform: translateX(-60%); /* Move the dropdown to the left */
 }
@@ -20,7 +20,6 @@
 
 /* Dropdown Cart Styling */
 .cart-items {
-    width: 400px; /* Further increased width */
     overflow: hidden; /* Ensure no scrollbars */
 }
 
@@ -39,11 +38,23 @@
     align-items: center;
 }
 
-.cart-item-controls .btn,
+
+.cart-item-controls .btn {
+    margin: 0 5px;
+    width: 30px; /* Reduced width */
+    height: 30px; /* Reduced height */
+    padding: 0; /* Remove padding */
+    font-size: 1rem; /* Adjust font size if needed */
+}
+
 .cart-item-controls input {
     margin: 0 5px;
-    width: 50px; /* Increased width to fit 2 digits */
+    width: 40px; /* Reduced width */
+    height: 30px; /* Reduced height */
+    text-align: right; /* Align text to the right */
+    padding-right: 5px; /* Add some padding to the right */
 }
+
 
 .cart-item-cost {
     margin-left: auto; /* Push the cost to the right */
@@ -53,9 +64,12 @@
 .cart-item .fas.fa-trash {
     margin: 0 10px; /* Space between cost and trash button */
 }
+
 .cart-total {
-    padding: 10px;
+    padding: 10px 20px 10px 10px;
     font-weight: bold;
+    font-size: 1.6rem;
+    text-align: right;
 }
 
 /* ... existing styles ... */
@@ -80,24 +94,28 @@
     flex-direction: column; /* Stack the name and controls vertically */
 }
 
+#navbarResponsive > ul > li:nth-child(2) > div > div.d-flex.justify-content-around {
+    padding-bottom: 10px;
+}
 
 /* ... existing styles ... */
 
 /* Center-align dropdowns for mobile */
-@media (max-width: 992px) { /* Bootstrap's breakpoint for large devices */
+@media (max-width: 992px) {
+    /* Bootstrap's breakpoint for large devices */
     .navbar-nav .dropdown-menu {
         position: fixed; /* Make the dropdown fixed */
-        top: 60px; /* Adjust based on the height of your navbar */
+        top: 174px; /* Adjust based on the height of your navbar */
+        bottom: 0;
         left: 50%; /* Center the dropdown */
         transform: translateX(-50%); /* Adjust for exact centering */
-        width: 80%; /* Set a width for the dropdown */
+        width: 99%; /* Set a width for the dropdown */
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for better visibility */
+        max-height: calc(100vh - 174px); /* Adjust this value based on your preference */
+        overflow-y: auto; /* Enable vertical scrolling */
     }
 }
 
-/* Disable hover effect for mobile */
-@media (max-width: 992px) { /* Bootstrap's breakpoint for large devices */
-    .navbar-nav li:hover .dropdown-menu {
-        display: none !important; /* Override any hover behavior */
-    }
+body.no-scroll {
+    overflow: hidden;
 }
