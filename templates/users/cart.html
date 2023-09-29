@@ -7,35 +7,44 @@
 
         {% for cart_item in cart_items %}
             <div class="card mb-3" id="cart-item-{{ cart_item.id }}">
-                <div class="card-body">
-                    <h5 class="card-title">{{ cart_item.product.name }}</h5>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item bg-light">
-                        <div class="row text-center">
-                            <button class="btn btn-outline-secondary" onclick="decrementQuantity({{ cart_item.id }})">
-                                -
-                            </button>
-                            <div class="col-lg-4 custom-cart-width">
-                                <input name="basketID" type="text" class="form-control" value="{{ cart_item.quantity }}"
-                                       readonly data-cart-item-id="{{ cart_item.id }}">
-                            </div>
-                            <button class="btn btn-outline-secondary" onclick="incrementQuantity({{ cart_item.id }})">
-                                +
-                            </button>
-                            <input price-id="{{ cart_item.id }}" value="{{ cart_item.product.price }}" type="hidden">
-                            <div cart-cost-id="{{ cart_item.id }}"
-                                 class="col-lg-4">{{ cart_item.cost|floatformat:"-2" }}
-                                €
-                            </div>
+                <img src="{{ cart_item.product.image.url }}" alt="{{ cart_item.product.name }}"
+                     class="cart-item-image">
+                <div class="cart-item-details">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ cart_item.product.name }}</h5>
+
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item bg-light">
+                            <div class="row text-center">
+                                <button class="btn btn-outline-secondary"
+                                        onclick="decrementQuantity({{ cart_item.id }})">
+                                    -
+                                </button>
+                                <div class="col-lg-4 custom-cart-width">
+                                    <input name="basketID" type="text" class="form-control"
+                                           value="{{ cart_item.quantity }}"
+                                           readonly data-cart-item-id="{{ cart_item.id }}">
+                                </div>
+                                <button class="btn btn-outline-secondary"
+                                        onclick="incrementQuantity({{ cart_item.id }})">
+                                    +
+                                </button>
+                                <input price-id="{{ cart_item.id }}" value="{{ cart_item.product.price }}"
+                                       type="hidden">
+                                <div cart-cost-id="{{ cart_item.id }}"
+                                     class="col-lg-4">{{ cart_item.cost|floatformat:"-2" }}
+                                    €
+                                </div>
 
                                 <a href="#" onclick="removeCartItem({{ cart_item.id }})">
                                     <i class="fas fa-trash"></i>
                                 </a>
 
-                        </div>
-                    </li>
-                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         {% endfor %}
 
