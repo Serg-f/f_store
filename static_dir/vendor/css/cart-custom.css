@@ -2,7 +2,7 @@
 
 /* Add space outside <div class="row text-center"> */
 .row.text-center {
-    padding-left: 15px;  /* Space on the left */
+    padding-left: 15px; /* Space on the left */
     padding-right: 15px; /* Space on the right */
     justify-content: space-between;
     align-items: center;
@@ -18,12 +18,20 @@
 }
 
 .col-lg-4.custom-cart-width input.form-control {
-    width: 50px;
+    margin: 0 5px;
+    width: 40px; /* Reduced width */
+    height: 30px; /* Reduced height */
+    text-align: right; /* Align text to the right */
+    padding-right: 5px; /* Add some padding to the right */
 }
 
 /* Make '-' and '+' button width the same */
 .btn-outline-secondary {
-    width: 40px;
+    margin: 0 5px;
+    width: 30px; /* Reduced width */
+    height: 30px; /* Reduced height */
+    padding: 0; /* Remove padding */
+    font-size: 1rem; /* Adjust font size if needed */
 }
 
 /* Adjusting the trash button positioning */
@@ -33,5 +41,8 @@
 
 /* Adjusting the cost value positioning */
 .row.text-center [cart-cost-id] {
-    margin-right: 10px;
+    margin-left: auto; /* Push the cost to the right */
+    margin-right: 10px; /* Space between cost and trash button */
+    padding: 0;
+    text-align: right;
 }
