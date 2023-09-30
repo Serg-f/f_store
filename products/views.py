@@ -69,10 +69,10 @@ def add_cart_item(request):
             item.quantity += 1
             item.save()
         else:
-            CartItem.objects.create(**kwargs, quantity=1)
+            item = CartItem.objects.create(**kwargs, quantity=1)
         return JsonResponse({
             'status': 'success',
-            'action': request.POST.get('action')
+            'cartItemId': item.id,
         })
     else:
         return JsonResponse({'status': 'error'})

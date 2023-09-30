@@ -129,19 +129,20 @@
 
     </div>
     <script>
-        function updateCartByProdId(productId, action) {
+        function updateCartByProdId(productId) {
             $.ajax({
                 url: "{% url 'products:add_cart_item' %}",
                 type: "POST",
                 data: {
                     'product_id': productId,
-                    'action': action,
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
                 dataType: 'json',
                 success: function (data) {
                     if (data.status == 'success') {
-                        //pass
+                        let cartItemId = data.cartItemId
+                        console.log(cartItemId)
+                        // put your solution here
                     }
                 }
 
@@ -149,20 +150,17 @@
         }
 
         function createCartItem(productId) {
-            updateCartByProdId(productId, 'create');
+            updateCartByProdId(productId);
             console.log('Backend updated')
             // Add animation class to the product card
             let productCard = document.querySelector(`[data-product-id="${productId}"]`);
             if (productCard) {
                 console.log('Start doing animation')
-                console.log(productCard)
                 productCard.classList.add('product-added');
-                console.log(productCard)
                 // Remove the animation class after 0.5s to reset the animation
                 setTimeout(() => {
                     productCard.classList.remove('product-added');
                 }, 500);
-                console.log(productCard)
             }
         }
 
