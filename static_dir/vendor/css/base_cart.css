@@ -23,10 +23,6 @@
     overflow: hidden; /* Ensure no scrollbars */
 }
 
-.cart-item {
-    padding: 10px;
-    border-bottom: 1px solid #e0e0e0;
-}
 
 .cart-item-name {
     display: block;
@@ -75,9 +71,9 @@
 /* ... existing styles ... */
 
 .cart-item {
+    padding: 10px;
     display: flex;
     align-items: center;
-    padding: 10px;
     border-bottom: 1px solid #e0e0e0;
 }
 

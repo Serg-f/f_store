@@ -11,7 +11,7 @@ from .models import CartItem, ProdCategory, Product
 
 class IndexView(TemplateView):
     template_name = 'products/index.html'
-    extra_context = {'title': 'Store'}
+    extra_context = {'title': 'F-Store'}
 
 
 class ProductsView(ListView):
@@ -24,7 +24,7 @@ class ProductsView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=None)
-        context['title'] = self.cat_selected.name if self.cat_selected else 'Store - Catalog'
+        context['title'] = self.cat_selected.name if self.cat_selected else 'F-Store - Catalog'
         context['cats'] = ProdCategory.objects.all()
         context.update(self.kwargs)
         return context

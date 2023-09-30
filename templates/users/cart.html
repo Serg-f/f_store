@@ -1,49 +1,39 @@
 {% load custom_filters %}
 {% if cart_items %}
     <div id="cart-content">
-        <h4 class="mt-3 mb-3 d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mt-3 mb-3 d-flex justify-content-between align-items-center">
             Cart <span class="badge badge-secondary badge-pill">{{ cart_items.total_quantity }}</span>
         </h4>
 
         {% for cart_item in cart_items %}
-            <div class="card mb-3" id="cart-item-{{ cart_item.id }}">
+            <div class="cart-item mb-3" id="cart-item-{{ cart_item.id }}">
                 <img src="{{ cart_item.product.image.url }}" alt="{{ cart_item.product.name }}"
                      class="cart-item-image">
                 <div class="cart-item-details">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ cart_item.product.name }}</h5>
+                    <h5 class="card-title">{{ cart_item.product.name }}</h5>
+
+                    <div class="cart-item-controls">
+                        <button class="btn btn-outline-secondary my-btn"
+                                onclick="decrementQuantity({{ cart_item.id }})">
+                            -
+                        </button>
+                        <input name="basketID" type="text" class="form-control"
+                               value="{{ cart_item.quantity }}"
+                               readonly data-cart-item-id="{{ cart_item.id }}">
+                        <button class="btn btn-outline-secondary my-btn"
+                                onclick="incrementQuantity({{ cart_item.id }})">
+                            +
+                        </button>
+                        <input price-id="{{ cart_item.id }}" value="{{ cart_item.product.price }}"
+                               type="hidden">
+                        <span cart-cost-id="{{ cart_item.id }}"
+                              class="cart-item-cost">{{ cart_item.cost|floatformat:"2" }} €</span>
+
+                        <a href="#" onclick="removeCartItem({{ cart_item.id }})">
+                            <i class="fas fa-trash"></i>
+                        </a>
 
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item bg-light">
-                            <div class="row text-center">
-                                <button class="btn btn-outline-secondary"
-                                        onclick="decrementQuantity({{ cart_item.id }})">
-                                    -
-                                </button>
-                                <div class="col-lg-4 custom-cart-width">
-                                    <input name="basketID" type="text" class="form-control"
-                                           value="{{ cart_item.quantity }}"
-                                           readonly data-cart-item-id="{{ cart_item.id }}">
-                                </div>
-                                <button class="btn btn-outline-secondary"
-                                        onclick="incrementQuantity({{ cart_item.id }})">
-                                    +
-                                </button>
-                                <input price-id="{{ cart_item.id }}" value="{{ cart_item.product.price }}"
-                                       type="hidden">
-                                <div cart-cost-id="{{ cart_item.id }}"
-                                     class="col-lg-4">{{ cart_item.cost|floatformat:"-2" }}
-                                    €
-                                </div>
-
-                                <a href="#" onclick="removeCartItem({{ cart_item.id }})">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-
-                            </div>
-                        </li>
-                    </ul>
                 </div>
             </div>
         {% endfor %}
@@ -66,102 +56,3 @@
         </h4>
     </div>
 {% endif %}
-
-<script>
-    function updateCart(cartItemId, action) {
-        $.ajax({
-            url: "{% url 'products:update_cart' %}",
-            type: "POST",
-            data: {
-                'cart_item_id': cartItemId,
-                'action': action,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            dataType: 'json',
-            success: function (data) {
-                if (data.status == 'success') {
-                    // Get the individual cart item's quantity and cost elements
-                    let itemQuantityInput = document.querySelector(`[data-cart-item-id="${cartItemId}"]`);
-                    let itemCostElement = document.querySelector(`[cart-cost-id="${cartItemId}"]`);
-                    let itemPriceInput = document.querySelector(`[price-id="${cartItemId}"]`);
-
-                    let currentQuantity = parseInt(itemQuantityInput.value);
-                    let currentPrice = parseFloat(itemPriceInput.value);
-
-                    if (data.action === 'add') {
-                        currentQuantity += 1;
-                    } else if (data.action === 'minus') {
-                        currentQuantity -= 1;
-                    } else if (data.action === 'remove') {
-                        currentQuantity = 0;
-                    }
-
-                    if (currentQuantity === 0 || data.action === 'remove') {
-                        // Remove the entire cart item div using the id
-
-                        let cartItemDiv = document.getElementById(`cart-item-${cartItemId}`);
-                        if (cartItemDiv) {
-                            cartItemDiv.remove();
-                        }
-                    } else {
-                        // Update the quantity and cost for the cart item
-                        itemQuantityInput.value = currentQuantity;
-                        itemCostElement.textContent = `${(currentQuantity * currentPrice).toFixed(2)} €`;
-                    }
-
-
-                    // Update the total quantity and total cost
-                    let totalQuantityElement = document.querySelector('.badge-pill');
-                    let totalCostElement = document.getElementById('total-cost');
-
-                    let allQuantities = document.querySelectorAll('[data-cart-item-id]');
-                    let allCosts = document.querySelectorAll('[cart-cost-id]');
-
-                    let totalQuantity = 0;
-                    let totalCost = 0;
-
-                    allQuantities.forEach(input => {
-                        totalQuantity += parseInt(input.value);
-                    });
-
-                    allCosts.forEach(cost => {
-                        totalCost += parseFloat(cost.textContent);
-                    });
-
-                    totalQuantityElement.textContent = totalQuantity;
-                    totalCostElement.textContent = `${totalCost.toFixed(2)} €`;
-
-                    if (totalQuantity === 0) {
-                        document.getElementById('cart-content').style.display = 'none';
-                        let cartContentDiv = document.getElementById('cart-content');
-                        let emptyCartMessageDiv = document.createElement('div');
-                        emptyCartMessageDiv.id = "empty-cart-message";
-                        emptyCartMessageDiv.innerHTML = `
-                            <h4 class="mt-3 mb-3 text-center">
-                                Cart is empty
-                            </h4>
-                        `;
-                        cartContentDiv.insertAdjacentElement('afterend', emptyCartMessageDiv);
-
-                    }
-                }
-            }
-
-
-        });
-    }
-
-    function incrementQuantity(cartItemId) {
-        updateCart(cartItemId, 'add');
-    }
-
-    function decrementQuantity(cartItemId) {
-        updateCart(cartItemId, 'minus');
-    }
-
-    function removeCartItem(cartItemId) {
-        updateCart(cartItemId, 'remove');
-    }
-
-
-</script>

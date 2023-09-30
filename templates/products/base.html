@@ -18,6 +18,8 @@
 
     <link href="{% static '/vendor/css/base_messages.css' %}" rel="stylesheet">
     <link href="{% static '/vendor/css/base_cart.css' %}" rel="stylesheet">
+    <link rel="icon" href="{% static '/vendor/img/icons8-f-120.png' %}" type="image/png">
+
     {% block css %} {% endblock %}
 
 </head>
@@ -27,7 +29,7 @@
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'index' %}">Store</a>
+        <a class="navbar-brand" href="{% url 'index' %}">F-Store</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
                 aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -48,46 +50,62 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="cartDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="badge-pill" style="display: none"></div>
                             <i class="fas fa-shopping-cart"></i> Cart
                         </a>
                         <div class="dropdown-menu" aria-labelledby="cartDropdown">
                             <!-- Dropdown Cart Items -->
-                            <div class="cart-items">
-                                {% for cart_item in cart_items %}
-                                    <div class="cart-item" data-cart-item-id="{{ cart_item.id }}">
-                                        <!-- Product image on the left -->
-                                        <img src="{{ cart_item.product.image.url }}" alt="{{ cart_item.product.name }}"
-                                             class="cart-item-image">
+                            {% if cart_items %}
+                                <div id="cart-content">
+                                    <div class="cart-items">
+                                        {% for cart_item in cart_items %}
+                                            <div class="cart-item" id="cart-item-{{ cart_item.id }}">
+                                                <!-- Product image on the left -->
+                                                <img src="{{ cart_item.product.image.url }}"
+                                                     alt="{{ cart_item.product.name }}"
+                                                     class="cart-item-image">
 
-                                        <!-- Product name above the controls -->
-                                        <div class="cart-item-details">
-                                            <span class="cart-item-name">{{ cart_item.product.name }}</span>
-                                            <div class="cart-item-controls">
-                                                <button class="btn btn-outline-secondary"
-                                                        onclick="updateCartItem({{ cart_item.id }}, 'decrease')">-
-                                                </button>
-                                                <input type="text" class="form-control" value="{{ cart_item.quantity }}"
-                                                       readonly>
-                                                <button class="btn btn-outline-secondary"
-                                                        onclick="updateCartItem({{ cart_item.id }}, 'increase')">+
-                                                </button>
-                                                <span class="cart-item-cost">{{ cart_item.cost|floatformat:"-2" }} €</span>
-                                                <a href="#" onclick="removeCartItem({{ cart_item.id }})"><i
-                                                        class="fas fa-trash"></i></a>
+                                                <!-- Product name above the controls -->
+                                                <div class="cart-item-details">
+                                                    <span class="cart-item-name">{{ cart_item.product.name }}</span>
+                                                    <div class="cart-item-controls">
+                                                        <button class="btn btn-outline-secondary"
+                                                                onclick="decrementQuantity({{ cart_item.id }})">-
+                                                        </button>
+                                                        <input data-cart-item-id='{{ cart_item.id }}' type="text"
+                                                               class="form-control" value="{{ cart_item.quantity }}"
+                                                               readonly>
+                                                        <button class="btn btn-outline-secondary"
+                                                                onclick="incrementQuantity({{ cart_item.id }})">+
+                                                        </button>
+                                                        <input price-id="{{ cart_item.id }}"
+                                                               value="{{ cart_item.product.price }}"
+                                                               type="hidden">
+                                                        <span cart-cost-id='{{ cart_item.id }}'
+                                                              class="cart-item-cost">{{ cart_item.cost|floatformat:"-2" }} €</span>
+                                                        <a href="#" onclick="removeCartItem({{ cart_item.id }})"><i
+                                                                class="fas fa-trash"></i></a>
+                                                    </div>
+                                                </div>
                                             </div>
+                                        {% endfor %}
+                                        <div id="total-cost" class="cart-total">
+                                            Total: {{ cart_items.total_cost|floatformat:"-2" }} €
                                         </div>
                                     </div>
-                                {% endfor %}
-                                <div class="cart-total">
-                                    Total: {{ cart_items.total_cost|floatformat:"-2" }} €
+
+                                    <div class="d-flex justify-content-around">
+                                        <a href="{% url 'users:profile' %}" class="btn btn-secondary">To Cart</a>
+                                        <a href="{% url 'orders:create_order' %}" class="btn btn-primary">Checkout</a>
+                                    </div>
                                 </div>
-                            </div>
-
-
-                            <div class="d-flex justify-content-around">
-                                <a href="{% url 'users:profile' %}" class="btn btn-secondary">To Cart</a>
-                                <a href="{% url 'orders:create_order' %}" class="btn btn-primary">Checkout</a>
-                            </div>
+                            {% else %}
+                                <div id="empty-cart-message">
+                                    <h4 class="mt-3 mb-3 text-center">
+                                        Cart is empty
+                                    </h4>
+                                </div>
+                            {% endif %}
                         </div>
                     </li>
                 {% endif %}
@@ -161,8 +179,6 @@
         const isMobile = window.matchMedia("only screen and (max-width: 992px)").matches;
 
         if (isMobile) {
-            console.log("Mobile device detected. Attaching event listeners...");
-
             let dropdownToggles = document.querySelectorAll('.dropdown-toggle');
             dropdownToggles.forEach(function (toggle) {
                 toggle.addEventListener('click', function (e) {
@@ -175,11 +191,106 @@
                         dropdownMenu.style.display = "block";
                         document.body.classList.add('no-scroll');
                     }
-                    console.log("Dropdown toggle clicked.");
                 });
             });
         }
     });
+
+    function updateCart(cartItemId, action) {
+        $.ajax({
+            url: "{% url 'products:update_cart' %}",
+            type: "POST",
+            data: {
+                'cart_item_id': cartItemId,
+                'action': action,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.status == 'success') {
+                    // Get the individual cart item's quantity and cost elements
+                    let itemQuantityInput = document.querySelector(`[data-cart-item-id="${cartItemId}"]`);
+                    let itemCostElement = document.querySelector(`[cart-cost-id="${cartItemId}"]`);
+                    let itemPriceInput = document.querySelector(`[price-id="${cartItemId}"]`);
+
+                    let currentQuantity = parseInt(itemQuantityInput.value);
+                    let currentPrice = parseFloat(itemPriceInput.value);
+
+                    if (data.action === 'add') {
+                        currentQuantity += 1;
+                    } else if (data.action === 'minus') {
+                        currentQuantity -= 1;
+                    } else if (data.action === 'remove') {
+                        currentQuantity = 0;
+                    }
+
+                    if (currentQuantity === 0 || data.action === 'remove') {
+                        // Remove the entire cart item div using the id
+
+                        let cartItemDiv = document.getElementById(`cart-item-${cartItemId}`);
+                        if (cartItemDiv) {
+                            cartItemDiv.remove();
+                        }
+                    } else {
+                        // Update the quantity and cost for the cart item
+                        itemQuantityInput.value = currentQuantity;
+                        itemCostElement.textContent = `${(currentQuantity * currentPrice).toFixed(2)} €`;
+                    }
+
+
+                    // Update the total quantity and total cost
+                    let totalQuantityElement = document.querySelector('.badge-pill');
+                    let totalCostElement = document.getElementById('total-cost');
+
+                    let allQuantities = document.querySelectorAll('[data-cart-item-id]');
+                    let allCosts = document.querySelectorAll('[cart-cost-id]');
+
+                    let totalQuantity = 0;
+                    let totalCost = 0;
+
+                    allQuantities.forEach(input => {
+                        totalQuantity += parseInt(input.value);
+                    });
+
+                    allCosts.forEach(cost => {
+                        totalCost += parseFloat(cost.textContent);
+                    });
+
+                    totalQuantityElement.textContent = totalQuantity;
+                    totalCostElement.textContent = `${totalCost.toFixed(2)} €`;
+
+                    if (totalQuantity === 0) {
+                        document.getElementById('cart-content').style.display = 'none';
+                        let cartContentDiv = document.getElementById('cart-content');
+                        let emptyCartMessageDiv = document.createElement('div');
+                        emptyCartMessageDiv.id = "empty-cart-message";
+                        emptyCartMessageDiv.innerHTML = `
+                            <h4 class="mt-3 mb-3 text-center">
+                                Cart is empty
+                            </h4>
+                        `;
+                        cartContentDiv.insertAdjacentElement('afterend', emptyCartMessageDiv);
+
+                    }
+                }
+            }
+
+
+        });
+    }
+
+    function incrementQuantity(cartItemId) {
+        updateCart(cartItemId, 'add');
+    }
+
+    function decrementQuantity(cartItemId) {
+        updateCart(cartItemId, 'minus');
+    }
+
+    function removeCartItem(cartItemId) {
+        updateCart(cartItemId, 'remove');
+    }
+
 
 </script>
 </body>

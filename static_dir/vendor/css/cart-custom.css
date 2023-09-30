@@ -26,12 +26,8 @@
 }
 
 /* Make '-' and '+' button width the same */
-.btn-outline-secondary {
-    margin: 0 5px;
-    width: 30px; /* Reduced width */
-    height: 30px; /* Reduced height */
-    padding: 0; /* Remove padding */
-    font-size: 1rem; /* Adjust font size if needed */
+.btn.btn-outline-secondary.my-btn {
+    margin: 0 1px;
 }
 
 /* Adjusting the trash button positioning */
@@ -45,4 +41,28 @@
     margin-right: 10px; /* Space between cost and trash button */
     padding: 0;
     text-align: right;
+
+}
+
+.cart-item {
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+}
+
+.cart-item-image {
+    width: 100px; /* Adjust as needed */
+    height: 125px; /* Adjust as needed */
+}
+
+.container {
+    max-width: 1230px;
+    min-width: 390px;
+}
+
+.cart-item-cost {
+    margin-left: auto; /* Push the cost to the right */
+    margin-right: 0; /* Space between cost and trash button */
 }
