@@ -59,6 +59,7 @@
                                 <div id="cart-content">
                                     <div class="cart-items">
                                         {% for cart_item in cart_items %}
+                                            <span cart-product-id="{{ cart_item.product.id }}" hidden></span>
                                             <div class="cart-item" id="cart-item-{{ cart_item.id }}">
                                                 <!-- Product image on the left -->
                                                 <img src="{{ cart_item.product.image.url }}"
