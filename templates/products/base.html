@@ -50,7 +50,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="cartDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <div id="base-cart-total-quantity-wrapper" >
+                            <div id="base-cart-total-quantity-wrapper">
                                 <div id="base-cart-total-quantity"
                                      style="display: {% if cart_items.total_quantity %}block
                                      {% else %}none
@@ -199,18 +199,25 @@
                 });
             });
         }
+
+        // Listen for collapse events on the main menu
+        $('#navbarResponsive').on('hidden.bs.collapse', function () {
+            // Close all open sub-menus
+            $('.dropdown-menu').hide();
+            document.body.classList.remove('no-scroll');
+        });
     });
 
     function updateTotalQuantityDisplay() {
         {% if request.path != profile_url and request.path != checkout_url %}
-        const totalQuantityElement = document.getElementById('base-cart-total-quantity');
-        const totalQuantity = parseInt(totalQuantityElement.textContent, 10);
+            const totalQuantityElement = document.getElementById('base-cart-total-quantity');
+            const totalQuantity = parseInt(totalQuantityElement.textContent, 10);
 
-        if (totalQuantity === 0) {
-            totalQuantityElement.style.display = 'none';
-        } else {
-            totalQuantityElement.style.display = 'block';
-        }
+            if (totalQuantity === 0) {
+                totalQuantityElement.style.display = 'none';
+            } else {
+                totalQuantityElement.style.display = 'block';
+            }
         {% endif %}
     }
 
