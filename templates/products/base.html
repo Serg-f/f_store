@@ -55,8 +55,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="cartDropdown">
                             <!-- Dropdown Cart Items -->
-                            {% if cart_items %}
-                                <div id="cart-content">
+                                <div id="cart-content" style="display: {% if cart_items %}block{% else %}none{% endif %};">
                                     <div class="cart-items">
                                         {% for cart_item in cart_items %}
                                             <div class="cart-item" id="cart-item-{{ cart_item.id }}">
@@ -99,13 +98,11 @@
                                         <a href="{% url 'orders:create_order' %}" class="btn btn-primary">Checkout</a>
                                     </div>
                                 </div>
-                            {% else %}
-                                <div id="empty-cart-message">
+                                <div id="empty-cart-message" style="display: {% if cart_items %}none{% else %}block{% endif %};">
                                     <h4 class="mt-3 mb-3 text-center">
                                         Cart is empty
                                     </h4>
                                 </div>
-                            {% endif %}
                         </div>
                     </li>
                 {% endif %}
@@ -246,20 +243,11 @@
         });
 
         totalQuantityElement.textContent = totalQuantity;
-        totalCostElement.textContent = `${totalCost.toFixed(2)} €`;
+        totalCostElement.textContent = `Total ${totalCost.toFixed(2)} €`;
 
         if (totalQuantity === 0) {
             document.getElementById('cart-content').style.display = 'none';
-            let cartContentDiv = document.getElementById('cart-content');
-            let emptyCartMessageDiv = document.createElement('div');
-            emptyCartMessageDiv.id = "empty-cart-message";
-            emptyCartMessageDiv.innerHTML = `
-                            <h4 class="mt-3 mb-3 text-center">
-                                Cart is empty
-                            </h4>
-                        `;
-            cartContentDiv.insertAdjacentElement('afterend', emptyCartMessageDiv);
-
+            document.getElementById('empty-cart-message').style.display = 'block';
         }
     }
 

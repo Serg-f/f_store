@@ -139,12 +139,56 @@
                 },
                 dataType: 'json',
                 success: function (data) {
-                    if (data.status == 'success') {
-                        let cartItemId = data.cartItemId
-                        console.log(cartItemId)
-                        // put your solution here
+                    cartItemId = data.cartItemId;
+                    // Existing cart item input field
+                    let existingCartItemInput = document.querySelector(`[data-cart-item-id='${cartItemId}']`);
+
+                    // Case 1: Cart item already exists
+                    if (existingCartItemInput) {
+                        let currentQuantity = parseInt(existingCartItemInput.value);
+                        existingCartItemInput.value = currentQuantity + 1;
+                        updateFrontCart(cartItemId, 'update');
+                    }
+                    // Case 2: Cart item does not exist
+                    else {
+                        // Retrieve product data
+                        let productDiv = document.querySelector(`[data-product-id='${productId}']`);
+                        let productName = productDiv.querySelector(`[prod-name-id='${productId}']`).textContent;
+                        let productImage = productDiv.querySelector(`[prod-img-id='${productId}']`).src;
+                        let productPrice = parseFloat(productDiv.querySelector(`[prod-price-id='${productId}']`).textContent);
+
+                        // Create new cart item HTML
+                        let newCartItem = document.createElement('div');
+                        newCartItem.className = 'cart-item';
+                        newCartItem.id = `cart-item-${cartItemId}`;
+                        newCartItem.innerHTML = `
+                            <img src="${productImage}" alt="${productName}" class="cart-item-image">
+                            <div class="cart-item-details">
+                                <span class="cart-item-name">${productName}</span>
+                                <div class="cart-item-controls">
+                                    <button class="btn btn-outline-secondary" onclick="decrementQuantity(${cartItemId})">-</button>
+                                    <input data-cart-item-id='${cartItemId}' type="text" class="form-control" value="1" readonly>
+                                    <button class="btn btn-outline-secondary" onclick="incrementQuantity(${cartItemId})">+</button>
+                                    <input price-id="${cartItemId}" value="${productPrice}" type="hidden">
+                                    <span cart-cost-id='${cartItemId}' class="cart-item-cost">${productPrice.toFixed(2)} €</span>
+                                    <a href="#" onclick="removeCartItem(${cartItemId})"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </div>
+                        `;
+
+                        // Check if cartItemsDiv and totalCostDiv exist, create them if they don't
+                        let cartItemsDiv = document.querySelector('.cart-items');
+                        let totalCostDiv = document.getElementById('total-cost'); // Get the total cost div
+
+                        cartItemsDiv.insertBefore(newCartItem, totalCostDiv);
+                        document.getElementById('cart-content').style.display = 'block';
+                        document.getElementById('empty-cart-message').style.display = 'none';
+
+                        // Update front-end cart
+                        updateFrontCart(cartItemId, 'update');
                     }
                 }
+
 
             });
         }
