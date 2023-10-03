@@ -1,59 +1,57 @@
 {% load custom_filters %}
-{% if cart_items %}
-    <div id="cart-content">
-        <h4 class="mt-3 mb-3 d-flex justify-content-between align-items-center">
-            Cart <span id="base-cart-total-quantity"
-                       class="badge badge-secondary badge-pill">{{ cart_items.total_quantity }}</span>
-        </h4>
+<div id="cart-content" style="display: {% if cart_items %}block{% else %}none{% endif %};">
+    <h4 class="mt-3 mb-3 d-flex justify-content-between align-items-center">
+        Cart <span id="profile-cart-total-quantity"
+                   class="badge badge-secondary badge-pill">{{ cart_items.total_quantity }}</span>
+    </h4>
 
-        {% for cart_item in cart_items %}
-            <div class="cart-item mb-3" id="cart-item-{{ cart_item.id }}">
-                <img src="{{ cart_item.product.image.url }}" alt="{{ cart_item.product.name }}"
-                     class="cart-item-image">
-                <div class="cart-item-details">
-                    <h5 class="card-title">{{ cart_item.product.name }}</h5>
+    {% for cart_item in cart_items %}
+        <div class="cart-item mb-3" id="cart-item-{{ cart_item.id }}">
+            <img src="{{ cart_item.product.image.url }}" alt="{{ cart_item.product.name }}"
+                 class="cart-item-image">
+            <div class="cart-item-details">
+                <h5 class="card-title">{{ cart_item.product.name }}</h5>
 
-                    <div class="cart-item-controls">
-                        <button class="btn btn-outline-secondary my-btn"
-                                onclick="decrementQuantity({{ cart_item.id }})">
-                            -
-                        </button>
-                        <input name="basketID" type="text" class="form-control"
-                               value="{{ cart_item.quantity }}"
-                               readonly data-cart-item-id="{{ cart_item.id }}">
-                        <button class="btn btn-outline-secondary my-btn"
-                                onclick="incrementQuantity({{ cart_item.id }})">
-                            +
-                        </button>
-                        <input price-id="{{ cart_item.id }}" value="{{ cart_item.product.price }}"
-                               type="hidden">
-                        <span cart-cost-id="{{ cart_item.id }}"
-                              class="cart-item-cost">{{ cart_item.cost|floatformat:"2" }} €</span>
+                <div class="cart-item-controls">
+                    <button class="btn btn-outline-secondary my-btn"
+                            onclick="decrementQuantity({{ cart_item.id }})">
+                        -
+                    </button>
+                    <input name="basketID" type="text" class="form-control"
+                           value="{{ cart_item.quantity }}"
+                           readonly data-cart-item-id="{{ cart_item.id }}">
+                    <button class="btn btn-outline-secondary my-btn"
+                            onclick="incrementQuantity({{ cart_item.id }})">
+                        +
+                    </button>
+                    <input price-id="{{ cart_item.id }}" value="{{ cart_item.product.price }}"
+                           type="hidden">
+                    <span cart-cost-id="{{ cart_item.id }}"
+                          class="cart-item-cost">{{ cart_item.cost|floatformat:"2" }} €</span>
 
-                        <a href="#" onclick="removeCartItem({{ cart_item.id }})">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                    <a href="#" onclick="removeCartItem({{ cart_item.id }})">
+                        <i class="fas fa-trash"></i>
+                    </a>
 
-                    </div>
                 </div>
             </div>
-        {% endfor %}
+        </div>
+    {% endfor %}
 
-        <div class="card mb-3">
-            <div class="card-footer">
-                <p class="float-left">Total</p>
-                <h4 id="total-cost" class="float-right">{{ cart_items.total_cost }} €</h4>
+    <div class="card mb-3">
+        <div class="card-footer">
+            <div id="total-cost" class="cart-total">
+                Total: {{ cart_items.total_cost|floatformat:"2" }} €
             </div>
         </div>
-        <a class="btn btn-success btn-lg float-right" href="{% url 'orders:create_order' %}">
-            Checkout
-        </a>
+    </div>
+    <a class="btn btn-success btn-lg float-right" href="{% url 'orders:create_order' %}">
+        Checkout
+    </a>
 
-    </div>
-{% else %}
-    <div id="empty-cart-message">
-        <h4 class="mt-3 mb-3 text-center">
-            Cart is empty
-        </h4>
-    </div>
-{% endif %}
+</div>
+<div id="empty-cart-message" style="display: {% if cart_items %}none{% else %}block{% endif %};">
+    <h4 class="mt-3 mb-3 text-center">
+        Cart is empty
+    </h4>
+</div>

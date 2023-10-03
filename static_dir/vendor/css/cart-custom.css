@@ -66,3 +66,7 @@
     margin-left: auto; /* Push the cost to the right */
     margin-right: 0; /* Space between cost and trash button */
 }
+
+#empty-cart-message {
+    width: 100%;
+}

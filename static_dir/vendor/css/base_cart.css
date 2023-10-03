@@ -104,9 +104,19 @@
     width: max-content;
 }
 
+@media (min-width: 993px) {  /* For screens larger than 992px */
+    #base-cart-total-quantity {
+        right: 60px;
+    }
+}
+
 /* Center-align dropdowns for mobile */
 @media (max-width: 992px) {
     /* Bootstrap's breakpoint for large devices */
+    #base-cart-total-quantity {
+        right: 20px;
+    }
+
     .navbar-nav .dropdown-menu {
         position: fixed; /* Make the dropdown fixed */
         top: 174px; /* Adjust based on the height of your navbar */
@@ -124,7 +134,30 @@
     }
 }
 
+
 body.no-scroll {
     overflow: hidden;
 }
 
+#base-cart-total-quantity-wrapper {
+    position: relative;
+}
+
+#base-cart-total-quantity {
+    position: absolute;
+    top: -10px;
+    background-color: red;
+    color: black;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    display: none; /* Initially hidden */
+}
+
+/* Show the quantity if it's not zero */
+#base-cart-total-quantity:not(:empty) {
+    display: block;
+}
