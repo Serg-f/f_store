@@ -1,6 +1,6 @@
 /* Dropdown Cart Styling */
 .dropdown-menu {
-    width: 420px; /* Adjust width as needed */
+    max-width: 420px; /* Adjust width as needed */
     max-height: calc(100vh - 56px);
     overflow-y: auto;
     left: 50%; /* Position the dropdown to the center of its parent */
@@ -94,7 +94,15 @@
     padding-bottom: 10px;
 }
 
-/* ... existing styles ... */
+#cart-content {
+    width: 418px;
+}
+
+#empty-cart-message {
+    margin-left: 30px;
+    margin-right: 30px;
+    width: max-content;
+}
 
 /* Center-align dropdowns for mobile */
 @media (max-width: 992px) {
@@ -110,8 +118,13 @@
         max-height: calc(100vh - 174px); /* Adjust this value based on your preference */
         overflow-y: auto; /* Enable vertical scrolling */
     }
+
+    #cart-content {
+        width: 100%;
+    }
 }
 
 body.no-scroll {
     overflow: hidden;
 }
+
