@@ -1,3 +1,7 @@
 body {
     padding-top: 56px;
 }
+
+.ml-auto {
+    margin-right: 5px;
+}

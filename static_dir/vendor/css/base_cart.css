@@ -104,38 +104,6 @@
     width: max-content;
 }
 
-@media (min-width: 993px) {
-    /* For screens larger than 992px */
-    #base-cart-total-quantity {
-        right: 60px;
-    }
-}
-
-/* Center-align dropdowns for mobile */
-@media (max-width: 992px) {
-    /* Bootstrap's breakpoint for large devices */
-    #base-cart-total-quantity {
-        right: 20px;
-    }
-
-    .navbar-nav .dropdown-menu {
-        position: fixed; /* Make the dropdown fixed */
-        top: 174px; /* Adjust based on the height of your navbar */
-        bottom: 0;
-        left: 50%; /* Center the dropdown */
-        transform: translateX(-50%); /* Adjust for exact centering */
-        width: 99%; /* Set a width for the dropdown */
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for better visibility */
-        max-height: calc(100vh - 174px); /* Adjust this value based on your preference */
-        overflow-y: auto; /* Enable vertical scrolling */
-    }
-
-    #cart-content {
-        width: 100%;
-    }
-}
-
-
 body.no-scroll {
     overflow: hidden;
 }
@@ -180,12 +148,48 @@ body.no-scroll {
 
 /* Footer Social Media Icons */
 .footer-social-icons a {
-  font-size: 22px;  /* Make icons larger */
-  margin-right: 24px;  /* Add spacing between icons */
+    font-size: 22px; /* Make icons larger */
+    margin-right: 24px; /* Add spacing between icons */
 }
 
 /* Footer Inscriptions */
 .footer-inscriptions p {
-  margin: 0;
-  font-size: 14px;
+    margin: 0;
+    font-size: 14px;
+}
+
+@media (min-width: 993px) {
+    /* For screens larger than 992px */
+    #base-cart-total-quantity {
+        right: 60px;
+    }
+}
+
+/* Center-align dropdowns for mobile */
+@media (max-width: 992px) {
+    /* Bootstrap's breakpoint for large devices */
+    #base-cart-total-quantity {
+        right: 20px;
+        top: 0;
+    }
+
+    .navbar-nav .dropdown-menu {
+        position: fixed; /* Make the dropdown fixed */
+        top: 170px; /* Adjust based on the height of your navbar */
+        bottom: 0;
+        left: 50%; /* Center the dropdown */
+        transform: translateX(-50%); /* Adjust for exact centering */
+        width: 99%; /* Set a width for the dropdown */
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for better visibility */
+        max-height: calc(100vh - 170px); /* Adjust this value based on your preference */
+        overflow-y: auto; /* Enable vertical scrolling */
+    }
+
+    #cart-content {
+        width: 100%;
+    }
+
+    .user-menu {
+        height: 131px;
+    }
 }

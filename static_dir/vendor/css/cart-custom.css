@@ -72,3 +72,8 @@
 #empty-cart-message {
     width: 100%;
 }
+
+.row {
+    margin-right: -10px;
+    margin-left: -10px;
+}

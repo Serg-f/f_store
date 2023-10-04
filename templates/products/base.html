@@ -121,7 +121,7 @@
                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user-circle"></i> {{ user.username }}
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <ul class="dropdown-menu user-menu" aria-labelledby="navbarDropdown">
                                 <li>
                                     <a class="dropdown-item" href="{% url 'users:profile' %}">Profile</a>
                                 </li>
@@ -219,9 +219,15 @@
         if (isMobile) {
             let dropdownToggles = document.querySelectorAll('.dropdown-toggle');
             dropdownToggles.forEach(function (toggle) {
+                let dropdownMenu = toggle.nextElementSibling;  // Changed 'this' to 'toggle'
+                if (dropdownMenu) {  // Check if dropdownMenu is not null or undefined
+                    {% if request.path == profile_url or request.path == checkout_url %}
+                        dropdownMenu.style.top = "130px";
+                    {% endif %}
+                }
                 toggle.addEventListener('click', function (e) {
                     e.preventDefault();
-                    let dropdownMenu = this.nextElementSibling;
+
                     if (dropdownMenu.style.display === "block") {
                         dropdownMenu.style.display = "none";
                         document.body.classList.remove('no-scroll');
@@ -230,7 +236,9 @@
                         document.body.classList.add('no-scroll');
                     }
                 });
+
             });
+
         }
 
         // Listen for collapse events on the main menu

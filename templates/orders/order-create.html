@@ -27,11 +27,12 @@
             <ul class="list-group mb-3">
                 {% for cart_item in cart_items %}
                     <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
+                        <div style="margin-right: 10px">
                             <h6 class="my-0">{{ cart_item.product.name }}</h6>
                             <small class="text-muted">{{ cart_item.quantity }} pcs.</small>
                         </div>
-                        <span class="text-muted">{{ cart_item.cost|intcomma }}<br>€</span>
+                        <div class="ml-auto">{{ cart_item.cost|intcomma }}</div>
+                        <div class="text-muted"> €</div>
                     </li>
 
                 {% endfor %}
