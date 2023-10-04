@@ -59,7 +59,9 @@
 
 .container {
     max-width: 1230px;
-    min-width: 390px;
+    /*min-width: 390px;*/
+    padding-right: 5px;
+    padding-left: 5px;
 }
 
 .cart-item-cost {

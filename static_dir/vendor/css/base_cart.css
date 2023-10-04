@@ -104,7 +104,8 @@
     width: max-content;
 }
 
-@media (min-width: 993px) {  /* For screens larger than 992px */
+@media (min-width: 993px) {
+    /* For screens larger than 992px */
     #base-cart-total-quantity {
         right: 60px;
     }
@@ -164,4 +165,27 @@ body.no-scroll {
 
 #cart-content > div.d-flex.justify-content-around {
     margin-bottom: 15px;
+}
+
+/*Make footer display bottom*/
+.flex-wrapper {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1;
+}
+
+/* Footer Social Media Icons */
+.footer-social-icons a {
+  font-size: 22px;  /* Make icons larger */
+  margin-right: 24px;  /* Add spacing between icons */
+}
+
+/* Footer Inscriptions */
+.footer-inscriptions p {
+  margin: 0;
+  font-size: 14px;
 }
