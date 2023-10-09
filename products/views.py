@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, DetailView
 from django.http import JsonResponse
 
 from .models import CartItem, ProdCategory, Product
@@ -28,6 +28,12 @@ class ProductsView(ListView):
         context['cats'] = ProdCategory.objects.all()
         context.update(self.kwargs)
         return context
+
+
+class ProductDetailView(DetailView):
+    template_name = 'products/product_detail.html'
+    model = Product
+    context_object_name = 'prod'
 
 
 @login_required
