@@ -15,7 +15,7 @@
             </div>
             <div class="col-md-6">
                 <h1>{{ prod.name }}</h1>
-                <p>{{ prod.description }}</p>
+                <p>{{ prod.description|safe}}</p>
                 <div class="price">
                     <span class="amount">{{ prod.price }} €</span>
                 </div>

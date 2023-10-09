@@ -1,6 +1,7 @@
+from ckeditor.fields import RichTextField
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-
+from ckeditor.widgets import CKEditorWidget
 from products.models import CartItem, ProdCategory, Product
 
 admin.site.register(ProdCategory)
@@ -13,6 +14,9 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     readonly_fields = ('get_html_photo_edit',)
     fields = ('name', 'description', 'image', 'get_html_photo_edit', 'price', 'stripe_price_id', 'quantity', 'category')
+    formfield_overrides = {
+        RichTextField: {'widget': CKEditorWidget},
+    }
 
     def get_html_photo(self, obj):
         if obj.image:

@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 from django.conf import settings
+from ckeditor.fields import RichTextField
 import stripe
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -20,7 +21,7 @@ class ProdCategory(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=250)
-    description = models.TextField()
+    description = RichTextField()
     image = models.ImageField(upload_to='prod_images/')
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=0)
@@ -43,6 +44,9 @@ class Product(models.Model):
         if not self.stripe_price_id:
             self.stripe_price_id = self.create_stripe_price().stripe_id
         return super().save(force_insert=False, force_update=False, using=None, update_fields=None)
+
+    class Meta:
+        ordering = ['image']
 
 
 class CartQuerySet(models.QuerySet):

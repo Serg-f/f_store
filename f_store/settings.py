@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 'django.contrib.sites',
     'django.contrib.humanize',
+    'ckeditor',
 
     'allauth',
     'allauth.account',
@@ -221,3 +222,13 @@ STRIPE_PUBLIC_KEY = 'pk_test_51NmzyhDf46bKHZ5z4k1pjLYxHZvS5n71IBP98cJHBfBLvZgqbY
 STRIPE_SECRET_KEY = 'sk_test_51NmzyhDf46bKHZ5z0KqFyVTxKX5e7rtv71biqXim0XoGKfyTSDFO0rufFUSZkUsynvS6YUdR24pDFDeZF4L8Yih600Uw572kVH'
 STRIPE_WEBHOOK_SECRET = 'whsec_1o4HtYunjxSpKtm5OV6xW9zbhdXrXwGU'  # global
 # STRIPE_WEBHOOK_SECRET = 'whsec_3eec64acd85a78f9c3f18513419651cdac7302fc715cc89bf9ab17437219f33d' # local
+
+# ckeditor
+CKEDITOR_UPLOAD_PATH = 'media/ckeditor'  # Choose your desired upload path
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 800,
+    },
+}

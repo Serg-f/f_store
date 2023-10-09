@@ -62,7 +62,7 @@
 
                         <div class="col-lg-4 col-md-6 mb-4" data-product-id="{{ prod.id }}">
                             <div class="card h-100">
-                                <a href="#">
+                                <a href="{% url 'products:detail' prod.id %}">
                                     <img prod-img-id="{{ prod.id }}" class="card-img-top"
                                          src="{{ prod.image.url }}"
                                          alt="{{ prod.name }}">
@@ -74,7 +74,7 @@
                                     </h4>
                                     <span prod-price-id="{{ prod.id }}" hidden>{{ prod.price }}</span>
                                     <h5>{{ prod.price|floatformat:"-2" }} €</h5>
-                                    <p class="card-text">{{ prod.description }}</p>
+{#                                    <p class="card-text">{{ prod.description|safe }}</p>#}
                                 </div>
                                 <div class="card-footer text-center">
                                     <button onclick="createCartItem({{ prod.id }})" type="button"
