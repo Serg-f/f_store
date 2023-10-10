@@ -1,4 +1,3 @@
-
 {% extends 'products/base.html' %}
 {% load static %}
 
@@ -9,19 +8,115 @@
 
 {% block content %}
     <div class="container detail">
+        <!-- Add this at the top of your product_detail.html -->
+
+
         <div class="row">
+
             <div class="col-md-6">
-                <img src="{{ prod.image.url }}" alt="{{ prod.name }}" class="img-fluid">
+                <a id="backButton" href="javascript:void(0);" onclick="goBackAndScroll()">
+                    <img src="{% static 'vendor/img/products/back-button-squeezed.png' %}" alt="Back">
+                </a>
+                <div class="sticky-image"><img id="image" src="{{ prod.image.url }}" alt="{{ prod.name }}" class="img-fluid"></div>
             </div>
             <div class="col-md-6">
-                <h1>{{ prod.name }}</h1>
-                <p>{{ prod.description|safe}}</p>
+                <h1 id="name">{{ prod.name }}</h1>
+                <p>{{ prod.description|safe }}</p>
                 <div class="price">
-                    <span class="amount">{{ prod.price }} €</span>
+                    <span id="price" class="amount">{{ prod.price }} €</span>
                 </div>
-                <button class="btn btn-primary add-to-cart" prod-id="{{ prod.id }}">Add to Cart</button>
+                <button onclick="createCartItem({{ prod.id }})" class="btn btn-primary add-to-cart"
+                        prod-id="{{ prod.id }}">Add to Cart
+                </button>
                 <a href="{% url 'users:profile' %}" class="btn btn-secondary go-to-cart">Go to Cart</a>
             </div>
         </div>
     </div>
+    <script>
+        function goBackAndScroll() {
+            const productID = "{{ prod.id }}";
+
+            // Use sessionStorage to store the product ID
+            sessionStorage.setItem('scrollToProduct', productID);
+
+            // Go back to the previous page
+            window.history.back();
+        }
+
+        function updateCartByProdId(productId) {
+            $.ajax({
+                url: "{% url 'products:add_cart_item' %}",
+                type: "POST",
+                data: {
+                    'product_id': productId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                dataType: 'json',
+                success: function (data) {
+                    cartItemId = data.cartItemId;
+                    // Existing cart item input field
+                    let existingCartItemInput = document.querySelector(`[data-cart-item-id='${cartItemId}']`);
+
+                    // Case 1: Cart item already exists
+                    if (existingCartItemInput) {
+                        let currentQuantity = parseInt(existingCartItemInput.value);
+                        existingCartItemInput.value = currentQuantity + 1;
+                        updateFrontCart(cartItemId, 'update');
+                    }
+                    // Case 2: Cart item does not exist
+                    else {
+                        // Retrieve product data
+                        let productName = document.getElementById('name').textContent;
+                        let productImage = document.getElementById('image').src;
+                        let productPrice = parseFloat(document.getElementById('price').textContent);
+
+                        // Create new cart item HTML
+                        let newCartItem = document.createElement('div');
+                        newCartItem.className = 'cart-item';
+                        newCartItem.id = `cart-item-${cartItemId}`;
+                        newCartItem.innerHTML = `
+                            <img src="${productImage}" alt="${productName}" class="cart-item-image">
+                            <div class="cart-item-details">
+                                <span class="cart-item-name">${productName}</span>
+                                <div class="cart-item-controls">
+                                    <button class="btn btn-outline-secondary" onclick="decrementQuantity(${cartItemId})">-</button>
+                                    <input data-cart-item-id='${cartItemId}' type="text" class="form-control" value="1" readonly>
+                                    <button class="btn btn-outline-secondary" onclick="incrementQuantity(${cartItemId})">+</button>
+                                    <input price-id="${cartItemId}" value="${productPrice}" type="hidden">
+                                    <span cart-cost-id='${cartItemId}' class="cart-item-cost">${productPrice.toFixed(2)} €</span>
+                                    <a href="#" onclick="removeCartItem(${cartItemId})"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </div>
+                        `;
+
+                        // Check if cartItemsDiv and totalCostDiv exist, create them if they don't
+                        let cartItemsDiv = document.querySelector('.cart-items');
+                        let totalCostDiv = document.getElementById('total-cost'); // Get the total cost div
+
+                        cartItemsDiv.insertBefore(newCartItem, totalCostDiv);
+                        document.getElementById('cart-content').style.display = 'block';
+                        document.getElementById('empty-cart-message').style.display = 'none';
+
+                        // Update front-end cart
+                        updateFrontCart(cartItemId, 'update');
+                    }
+                }
+
+
+            });
+        }
+
+        function createCartItem(productId) {
+            updateCartByProdId(productId);
+            // Add animation class to the product card
+            let productCard = document.querySelector(`[prod-id="${productId}"]`);
+            if (productCard) {
+                productCard.classList.add('product-added');
+                // Remove the animation class after 0.5s to reset the animation
+                setTimeout(() => {
+                    productCard.classList.remove('product-added');
+                }, 500);
+            }
+        }
+    </script>
 {% endblock %}

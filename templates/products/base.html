@@ -16,8 +16,7 @@
 
     <!-- Custom styles for this template -->
 
-    <link href="{% static '/vendor/css/base_messages.css' %}" rel="stylesheet">
-    <link href="{% static '/vendor/css/base_cart.css' %}" rel="stylesheet">
+    <link href="{% static '/vendor/css/base.css' %}" rel="stylesheet">
     <link rel="icon" href="{% static '/vendor/img/icons8-f-120.png' %}" type="image/png">
 
     {% block css %} {% endblock %}
@@ -101,8 +100,8 @@
                                     </div>
 
                                     <div class="d-flex justify-content-around">
-                                        <a href="{% url 'users:profile' %}" class="btn btn-secondary">To Cart</a>
-                                        <a href="{% url 'orders:create_order' %}" class="btn btn-primary">Checkout</a>
+                                        <a href="{% url 'users:profile' %}" class="btn btn-primary">To Cart</a>
+                                        <a href="{% url 'orders:create_order' %}" class="btn btn-secondary">Checkout</a>
                                     </div>
                                 </div>
                                 <div id="empty-cart-message"

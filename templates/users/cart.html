@@ -7,10 +7,14 @@
 
     {% for cart_item in cart_items %}
         <div class="cart-item mb-3" id="cart-item-{{ cart_item.id }}">
-            <img src="{{ cart_item.product.image.url }}" alt="{{ cart_item.product.name }}"
-                 class="cart-item-image">
+            <a href="{% url 'products:detail' cart_item.product.id %}">
+                <img src="{{ cart_item.product.image.url }}" alt="{{ cart_item.product.name }}"
+                     class="cart-item-image">
+            </a>
             <div class="cart-item-details">
-                <h5 class="card-title">{{ cart_item.product.name }}</h5>
+                <a href="{% url 'products:detail' cart_item.product.id %}">
+                    <h5 class="card-title">{{ cart_item.product.name }}</h5>
+                </a>
 
                 <div class="cart-item-controls">
                     <button class="btn btn-outline-secondary my-btn"

@@ -13,12 +13,15 @@
 
         <div class="row">
 
-            <div class="col-lg-3">
+            <div class="col-lg-3 ">
 
                 <h1 class="my-4">F-Store</h1>
-                <div class="list-group">
+                <div class="list-group sticky-image">
+                    <a href="{% url 'products:category' 0 %}"
+                       class="list-group-item {% if not pk %}cat-selected{% endif %}">All categories</a>
                     {% for cat in cats %}
-                        <a href="{% url 'products:category' cat.id %}" class="list-group-item">{{ cat }}</a>
+                        <a href="{% url 'products:category' cat.id %}"
+                           class="list-group-item {% if pk == cat.id %}cat-selected{% endif %}">{{ cat }}</a>
                     {% endfor %}
                 </div>
 
@@ -74,7 +77,6 @@
                                     </h4>
                                     <span prod-price-id="{{ prod.id }}" hidden>{{ prod.price }}</span>
                                     <h5>{{ prod.price|floatformat:"-2" }} €</h5>
-{#                                    <p class="card-text">{{ prod.description|safe }}</p>#}
                                 </div>
                                 <div class="card-footer text-center">
                                     <button onclick="createCartItem({{ prod.id }})" type="button"
@@ -130,6 +132,21 @@
 
     </div>
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const productID = sessionStorage.getItem('scrollToProduct');
+
+            if (productID) {
+                const element = document.querySelector(`[data-product-id='${productID}']`);
+
+                if (element) {
+                    element.scrollIntoView();
+                }
+
+                // Clear the sessionStorage
+                sessionStorage.removeItem('scrollToProduct');
+            }
+        });
+
         function updateCartByProdId(productId) {
             $.ajax({
                 url: "{% url 'products:add_cart_item' %}",
@@ -196,11 +213,9 @@
 
         function createCartItem(productId) {
             updateCartByProdId(productId);
-            console.log('Backend updated')
             // Add animation class to the product card
             let productCard = document.querySelector(`[data-product-id="${productId}"]`);
             if (productCard) {
-                console.log('Start doing animation')
                 productCard.classList.add('product-added');
                 // Remove the animation class after 0.5s to reset the animation
                 setTimeout(() => {
@@ -213,14 +228,4 @@
     </script>
 {% endblock %}
 
-<!-- Footer -->
-{#{% block footer %}#}
-{#    <footer class="py-5 bg-dark">#}
-{##}
-{#        <div class="container">#}
-{#            <p class="m-0 text-center text-white">Copyright &copy; Store 2022</p>#}
-{#        </div>#}
-{#        <!-- /.container -->#}
-{#    </footer>#}
-{#{% endblock %}#}
 

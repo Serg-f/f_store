@@ -31,4 +31,13 @@ body {
 }
 
 
+.cat-selected {
+    background-color: #f8f9fa; /* Light gray background */
+    color: #343a40; /* Dark text */
+    font-weight: bold; /* Bold text */
+    border-left: 4px solid #007bff; /* Blue left border */
+    padding-left: 12px; /* Extra left padding */
+    pointer-events: none; /* Make it non-clickable */
+    cursor: default; /* Change cursor to default */
+}
 
