@@ -44,13 +44,12 @@ class Order(models.Model):
     def send_user_order_status_email(self):
         subject = f'F-Store. Updating your order №{self.id} status: {self.get_status_display()}'
         link = DOMAIN_NAME + reverse('orders:order_detail', kwargs={'pk': self.id})
-        message = f'''
-        Hello {self.first_name} {self.last_name},
-        Your order №{self.id} has received new status: {self.get_status_display()}
-        Delivery address: {self.address}
-        To check order details follow the link:
-        {link}
-        '''
+        message = f'Hello {self.first_name} {self.last_name},\n' \
+            f'Your order №{self.id} has received new status: {self.get_status_display()}\n' \
+            f'Delivery address: {self.address}\n' \
+            'To check order details follow the link:\n' \
+            f'{link}'
+
         send_mail(
             subject=subject,
             message=message,
