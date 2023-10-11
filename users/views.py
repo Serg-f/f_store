@@ -4,6 +4,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
+from django.utils.html import format_html
 from django.views.generic import CreateView, UpdateView
 from django.views.generic.base import ContextMixin, TemplateView
 
@@ -23,7 +24,12 @@ class UserLoginView(SuccessMessageMixin, TitleMixin, LoginView):
     title = 'Authorization'
     template_name = 'users/login.html'
     form_class = UserLoginForm
-    success_message = 'Welcome, %(username)s!\nYou have been successfully logged in.'
+
+    def get_success_message(self, cleaned_data):
+        return format_html(
+            'Welcome, {username}! You have successfully logged in.',
+            username=cleaned_data.get('username')
+        )
 
     def get(self, request, *args, **kwargs):
         # Store the referrer URL in the session if it's not the login page itself
@@ -50,18 +56,32 @@ class UserLoginView(SuccessMessageMixin, TitleMixin, LoginView):
 
 class UserLogoutView(LogoutView):
     def dispatch(self, request, *args, **kwargs):
-        messages.success(request, f'Good by, {request.user.username}!\nYou have successfully logged out.')
+        # Save the current URL to redirect back to it after logout
+        self.next_page = request.META.get('HTTP_REFERER', '/')
+
+        success_message = format_html(f'Goodbye, {request.user.username}! You have successfully logged out.')
+        messages.success(request, success_message)
+
         return super().dispatch(request, *args, **kwargs)
 
+    def get_next_page(self):
+        """
+        Return the URL to redirect to after processing this request.
+        """
+        return self.next_page or super().get_next_page()
 
 class RegisterView(SuccessMessageMixin, TitleMixin, CreateView):
     title = 'Create an account'
     form_class = UserRegisterForm
     template_name = 'users/register.html'
     success_url = reverse_lazy('users:login')
-    success_message = 'Your account has been successfully created. ' \
-                      'To complete registration check your email and follow the link inside. ' \
-                      'If you do not see the email - check the spam folder.'
+
+    def get_success_message(self, cleaned_data):
+        return format_html(
+            'Your account has been successfully created. <br>'
+            'To complete registration check your email and follow the link inside. <br>'
+            'If you do not see the email - check the spam folder.'
+        )
 
 
 class ProfileView(LoginRequiredMixin, SuccessMessageMixin, TitleMixin, UpdateView):
