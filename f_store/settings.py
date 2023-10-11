@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-0l2gq!!0gmo-0hncufm!e^af+#%vf3#s=bjadv3*i)chj_24(e
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-DOMAIN_NAME = 'https://5b8c-94-216-13-203.ngrok-free.app'
-# DOMAIN_NAME = 'http://127.0.0.1:8000'
+# DOMAIN_NAME = 'https://5b8c-94-216-13-203.ngrok-free.app'
+DOMAIN_NAME = 'https://8589-92-78-86-245.ngrok-free.app'
 
 # Application definition
 
@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django.contrib.sites',
     'django.contrib.humanize',
     'ckeditor',
 
@@ -168,11 +167,11 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 # sending email
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'commonemail2077@gmail.com'
-EMAIL_HOST_PASSWORD = 'irvuvpcyrshyrbgs'
+EMAIL_HOST_USER = 'f.store.notification@gmail.com'
+EMAIL_HOST_PASSWORD = 'vyoavzyegxybwkfe'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
