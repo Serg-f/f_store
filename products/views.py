@@ -1,8 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView, DetailView
 from django.http import JsonResponse
 
@@ -17,6 +15,14 @@ class IndexView(TemplateView):
 class ProductsView(ListView):
     template_name = 'products/products.html'
     paginate_by = 6
+
+
+    def dispatch(self, request, *args, **kwargs):
+        success_message = 'Your account has been successfully created. ' \
+                          'To complete registration check your email and follow the link inside. ' \
+                          'If you do not see the email - check the spam folder.'
+        messages.success(request, success_message)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         self.cat_selected = get_object_or_404(ProdCategory, **self.kwargs) if self.kwargs.get('pk') else None

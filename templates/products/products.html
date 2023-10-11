@@ -176,13 +176,18 @@
                         let productPrice = parseFloat(productDiv.querySelector(`[prod-price-id='${productId}']`).textContent);
 
                         // Create new cart item HTML
+                        let linkToDetail = "{% url 'products:detail' 0 %}".replace('0', productId);
                         let newCartItem = document.createElement('div');
                         newCartItem.className = 'cart-item';
                         newCartItem.id = `cart-item-${cartItemId}`;
                         newCartItem.innerHTML = `
-                            <img src="${productImage}" alt="${productName}" class="cart-item-image">
+                            <a href="${linkToDetail}">
+                                <img src="${productImage}" alt="${productName}" class="cart-item-image">
+                            </a>
                             <div class="cart-item-details">
-                                <span class="cart-item-name">${productName}</span>
+                                <a href="${linkToDetail}">
+                                    <span class="cart-item-name">${productName}</span>
+                                </a>
                                 <div class="cart-item-controls">
                                     <button class="btn btn-outline-secondary" onclick="decrementQuantity(${cartItemId})">-</button>
                                     <input data-cart-item-id='${cartItemId}' type="text" class="form-control" value="1" readonly>
@@ -212,6 +217,11 @@
         }
 
         function createCartItem(productId) {
+            if (!{{ user.is_authenticated|yesno:"true,false" }}) {
+                window.location.href = "{% url 'users:login' %}";
+            }
+
+
             updateCartByProdId(productId);
             // Add animation class to the product card
             let productCard = document.querySelector(`[data-product-id="${productId}"]`);

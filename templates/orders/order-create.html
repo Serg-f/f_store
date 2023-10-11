@@ -28,7 +28,9 @@
                 {% for cart_item in cart_items %}
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div style="margin-right: 10px">
+                            <a href="{% url 'products:detail' cart_item.product.id %}">
                             <h6 class="my-0">{{ cart_item.product.name }}</h6>
+                            </a>
                             <small class="text-muted">{{ cart_item.quantity }} pcs.</small>
                         </div>
                         <div class="ml-auto">{{ cart_item.cost|intcomma }}</div>

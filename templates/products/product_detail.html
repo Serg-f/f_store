@@ -17,7 +17,8 @@
                 <a id="backButton" href="javascript:void(0);" onclick="goBackAndScroll()">
                     <img src="{% static 'vendor/img/products/back-button-squeezed.png' %}" alt="Back">
                 </a>
-                <div class="sticky-image"><img id="image" src="{{ prod.image.url }}" alt="{{ prod.name }}" class="img-fluid"></div>
+                <div class="sticky-image"><img id="image" src="{{ prod.image.url }}" alt="{{ prod.name }}"
+                                               class="img-fluid"></div>
             </div>
             <div class="col-md-6">
                 <h1 id="name">{{ prod.name }}</h1>
@@ -34,14 +35,14 @@
     </div>
     <script>
         function goBackAndScroll() {
-            const productID = "{{ prod.id }}";
-
-            // Use sessionStorage to store the product ID
-            sessionStorage.setItem('scrollToProduct', productID);
-
-            // Go back to the previous page
-            window.history.back();
+            let referrer = document.referrer;
+            if (referrer.endsWith("{% url 'users:login' %}")) {
+                window.location.href = "{% url 'products:category' prod.category.id %}";
+            } else {
+                window.history.back();
+            }
         }
+
 
         function updateCartByProdId(productId) {
             $.ajax({
@@ -71,13 +72,18 @@
                         let productPrice = parseFloat(document.getElementById('price').textContent);
 
                         // Create new cart item HTML
+                        let linkToDetail = "{% url 'products:detail' 0 %}".replace('0', productId);
                         let newCartItem = document.createElement('div');
                         newCartItem.className = 'cart-item';
                         newCartItem.id = `cart-item-${cartItemId}`;
                         newCartItem.innerHTML = `
-                            <img src="${productImage}" alt="${productName}" class="cart-item-image">
+                            <a href="${linkToDetail}">
+                                <img src="${productImage}" alt="${productName}" class="cart-item-image">
+                            </a>
                             <div class="cart-item-details">
-                                <span class="cart-item-name">${productName}</span>
+                                <a href="${linkToDetail}">
+                                    <span class="cart-item-name">${productName}</span>
+                                </a>
                                 <div class="cart-item-controls">
                                     <button class="btn btn-outline-secondary" onclick="decrementQuantity(${cartItemId})">-</button>
                                     <input data-cart-item-id='${cartItemId}' type="text" class="form-control" value="1" readonly>
@@ -107,6 +113,10 @@
         }
 
         function createCartItem(productId) {
+            if (!{{ user.is_authenticated|yesno:"true,false" }}) {
+                window.location.href = "{% url 'users:login' %}";
+            }
+
             updateCartByProdId(productId);
             // Add animation class to the product card
             let productCard = document.querySelector(`[prod-id="${productId}"]`);

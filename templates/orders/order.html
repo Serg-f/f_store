@@ -21,7 +21,9 @@
                     <tbody>
                     {% for item in object.cart_history.items %}
                     <tr>
-                        <th scope="row">{{ item.name }}</th>
+                        <th scope="row">
+                            <a href="{% url 'products:detail' item.id %}">{{ item.name }}</a>
+                        </th>
                         <td>{{ item.quantity }}</td>
                         <td>{{ item.price }} €</td>
                         <td>{{ item.cost }} €</td>

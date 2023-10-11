@@ -17,7 +17,7 @@
     <!-- Custom styles for this template -->
 
     <link href="{% static '/vendor/css/base.css' %}" rel="stylesheet">
-    <link rel="icon" href="{% static '/vendor/img/icons8-f-120.png' %}" type="image/png">
+    <link rel="icon" href="{% static '/vendor/img/favicon.png' %}" type="image/png">
 
     {% block css %} {% endblock %}
 
@@ -66,13 +66,17 @@
                                         {% for cart_item in cart_items %}
                                             <div class="cart-item" id="cart-item-{{ cart_item.id }}">
                                                 <!-- Product image on the left -->
+                                                <a href="{% url 'products:detail' cart_item.product.id %}">
                                                 <img src="{{ cart_item.product.image.url }}"
                                                      alt="{{ cart_item.product.name }}"
                                                      class="cart-item-image">
+                                                </a>
 
                                                 <!-- Product name above the controls -->
                                                 <div class="cart-item-details">
+                                                    <a href="{% url 'products:detail' cart_item.product.id %}">
                                                     <span class="cart-item-name">{{ cart_item.product.name }}</span>
+                                                    </a>
                                                     <div class="cart-item-controls">
                                                         <button class="btn btn-outline-secondary"
                                                                 onclick="decrementQuantity({{ cart_item.id }})">-

@@ -1,5 +1,9 @@
 /* Styles for Product Detail Page */
 
+body {
+    padding-top: 56px;
+}
+
 /* Image styles */
 .img-fluid {
     max-width: 100%;
@@ -38,7 +42,7 @@ p {
 }
 
 .container.detail {
-    margin-top: 100px; /* Adjust this value based on the height of your navigation panel */
+    margin-top: 15px; /* Adjust this value based on the height of your navigation panel */
 }
 
 
