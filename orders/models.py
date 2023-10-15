@@ -42,7 +42,7 @@ class Order(models.Model):
         items.delete()
 
     def send_user_order_status_email(self):
-        subject = f'F-Store. Updating your order №{self.id} status: {self.get_status_display()}'
+        subject = f'Order №{self.id} status: {self.get_status_display()}'
         link = DOMAIN_NAME + reverse('orders:order_detail', kwargs={'pk': self.id})
         message = f'Hello {self.first_name} {self.last_name},\n' \
             f'Your order №{self.id} has received new status: {self.get_status_display()}\n' \
@@ -62,14 +62,14 @@ class Order(models.Model):
         link = DOMAIN_NAME + reverse('admin:orders_order_change', kwargs={'object_id': self.id})
         message = [f'Order #{self.id} status: {self.get_status_display()}',
                    f'Admin panel detail link: {link}',
-                   f'First name, last name: {self.first_name} {self.last_name}',
+                   f'Name: {self.first_name} {self.last_name}',
                    f'Total cost: {self.cart_history["total_cost"]}',
                    f'Delivery address: {self.address}',
                    'Items:\n']
         for i, item in enumerate(self.cart_history['items'], start=1):
-            message.append(f'    {i}.')
-            message.append(f'    Id: {item["id"]}')
-            message.append(f'    Name: {item["name"]}')
+            message.append(f'{i}.')
+            message.append(f'Id: {item["id"]}')
+            message.append(f'Name: {item["name"]}')
             message.append(f'    Quantity: {item["quantity"]}')
             message.append(f'    Price: {item["price"]}')
             message.append(f'    Cost: {item["cost"]}\n')
