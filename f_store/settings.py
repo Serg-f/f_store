@@ -9,24 +9,45 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import environ
 import os
 from pathlib import Path
+
+env = environ.Env(
+    # set casting
+    DEBUG=bool,
+    SECRET_KEY=str,
+
+    DOMAIN_NAME=str,
+    MAIL_HOST=str,
+    EMAIL_PORT=int,
+    EMAIL_HOST_USER=str,
+    EMAIL_HOST_PASSWORD=str,
+    EMAIL_USE_TLS=bool,
+    EMAIL_USE_SSL=bool,
+
+    STRIPE_PUBLIC_KEY=str,
+    STRIPE_SECRET_KEY=str,
+    STRIPE_WEBHOOK_SECRET=str,
+)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+environ.Env.read_env(BASE_DIR / '.env')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0l2gq!!0gmo-0hncufm!e^af+#%vf3#s=bjadv3*i)chj_24(e'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-# DOMAIN_NAME = 'https://5b8c-94-216-13-203.ngrok-free.app'
-DOMAIN_NAME = 'https://8589-92-78-86-245.ngrok-free.app'
+
+DOMAIN_NAME = env('DOMAIN_NAME')
 
 # Application definition
 
@@ -47,7 +68,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.yandex',
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.github',
-    # 'debug_toolbar',
+    'debug_toolbar',
 
     'products',
     'users',
@@ -62,7 +83,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
 
@@ -167,13 +188,16 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 # sending email
-# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'f.store.notification@gmail.com'
-EMAIL_HOST_PASSWORD = 'vyoavzyegxybwkfe'
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+else:
+    EMAIL_HOST = env('EMAIL_HOST')
+    EMAIL_PORT = env('EMAIL_PORT')
+    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+    EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+    EMAIL_USE_SSL = env('EMAIL_USE_SSL')
 
 # all auth
 AUTHENTICATION_BACKENDS = [
@@ -217,10 +241,9 @@ SOCIALACCOUNT_PROVIDERS = {
 SOCIALACCOUNT_QUERY_EMAIL = True
 
 # Stripe
-STRIPE_PUBLIC_KEY = 'pk_test_51NmzyhDf46bKHZ5z4k1pjLYxHZvS5n71IBP98cJHBfBLvZgqbYFKVkF4arZKmhmzFU0wzEYHU5pB1itMXGgYSyaH00AVY0kVtm'
-STRIPE_SECRET_KEY = 'sk_test_51NmzyhDf46bKHZ5z0KqFyVTxKX5e7rtv71biqXim0XoGKfyTSDFO0rufFUSZkUsynvS6YUdR24pDFDeZF4L8Yih600Uw572kVH'
-STRIPE_WEBHOOK_SECRET = 'whsec_1o4HtYunjxSpKtm5OV6xW9zbhdXrXwGU'  # global
-# STRIPE_WEBHOOK_SECRET = 'whsec_3eec64acd85a78f9c3f18513419651cdac7302fc715cc89bf9ab17437219f33d' # local
+STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
 
 # ckeditor
 CKEDITOR_UPLOAD_PATH = 'media/ckeditor'  # Choose your desired upload path

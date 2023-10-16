@@ -1,3 +1,4 @@
 /.idea/
 /venv/
 /archive.tar.gz
+/.env
