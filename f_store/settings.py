@@ -29,6 +29,8 @@ env = environ.Env(
     STRIPE_PUBLIC_KEY=str,
     STRIPE_SECRET_KEY=str,
     STRIPE_WEBHOOK_SECRET=str,
+    GIT_CLIENT_ID=str,
+    GIT_SECRET=str,
 )
 
 
@@ -215,12 +217,8 @@ SOCIALACCOUNT_PROVIDERS = {
             'user:email',
         ],
         'APP': {
-            # local
-            'client_id': 'f33c928c32d7cce95337',
-            'secret': '469faae4cd621e869e61d509db8b97d73ee0040b',
-            # global
-            # 'client_id': '5fcbf758911d8fff2af2',
-            # 'secret': '0e6d7c4fbbbc1d8a53a0b0cf0c74877e14025a6c',
+            'client_id': env('GIT_CLIENT_ID'),
+            'secret': env('GIT_SECRET'),
         }
     },
     'google': {
