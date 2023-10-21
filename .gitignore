@@ -2,3 +2,4 @@
 /venv/
 /archive.tar.gz
 /.env
+/stripe
