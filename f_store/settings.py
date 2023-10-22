@@ -19,7 +19,7 @@ env = environ.Env(
     SECRET_KEY=str,
 
     DOMAIN_NAME=str,
-    MAIL_HOST=str,
+    EMAIL_HOST=str,
     EMAIL_PORT=int,
     EMAIL_HOST_USER=str,
     EMAIL_HOST_PASSWORD=str,
@@ -75,6 +75,8 @@ INSTALLED_APPS = [
     'products',
     'users',
     'orders',
+
+    'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
@@ -87,6 +89,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'f_store.urls'
@@ -201,6 +205,7 @@ else:
     EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
     EMAIL_USE_TLS = env('EMAIL_USE_TLS')
     EMAIL_USE_SSL = env('EMAIL_USE_SSL')
+
 
 # all auth
 AUTHENTICATION_BACKENDS = [
