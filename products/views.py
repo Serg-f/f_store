@@ -1,7 +1,5 @@
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.utils.html import format_html
 from django.views.generic import ListView, TemplateView, DetailView
 from django.http import JsonResponse
 
