@@ -75,3 +75,29 @@ p {
 .product-added {
     animation: addedToCart 0.5s forwards;
 }
+
+/* Styles for Back to Catalog Link */
+.back-to-catalog-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    font-size: 1.2rem;
+    color: #007bff;
+    transition: color 0.3s ease;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.back-to-catalog-link:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.back-arrow {
+    font-size: 1.5rem;
+    margin-right: 5px;
+}
+
+.to-catalog-text:hover {
+    text-decoration: underline;
+}
