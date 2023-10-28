@@ -14,7 +14,7 @@
         <div class="row">
 
             <div class="col-md-6">
-                <a id="backButton" href="javascript:void(0);" onclick="goBackAndScroll()">
+                <a id="backButton" href="{% url 'products:category' prod.category.id %}?page={{ page_number }}">
                     <img src="{% static 'vendor/img/products/back-button-squeezed.png' %}" alt="Back">
                 </a>
                 <div class="sticky-image"><img id="image" src="{{ prod.image.url }}" alt="{{ prod.name }}"
@@ -34,14 +34,10 @@
         </div>
     </div>
     <script>
-        function goBackAndScroll() {
-            let referrer = document.referrer;
-            if (referrer.endsWith("{% url 'users:login' %}")) {
-                window.location.href = "{% url 'products:category' prod.category.id %}";
-            } else {
-                window.history.back();
-            }
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            sessionStorage.setItem('scrollToProduct', '{{ prod.id }}');
+        });
+
 
 
         function updateCartByProdId(productId) {

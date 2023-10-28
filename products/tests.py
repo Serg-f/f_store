@@ -3,6 +3,7 @@ from http import HTTPStatus
 from django.test import TestCase
 from django.urls import reverse
 
+from f_store.settings import PAGINATE_BY
 from .models import ProdCategory, Product
 
 
@@ -28,11 +29,11 @@ class ProductViewTestCase(TestCase):
 
     def test_all_cats(self):
         response = self.client.get(reverse('products:category', args=(0,)))
-        qs_db = Product.objects.all()[:6]
+        qs_db = Product.objects.all()[:PAGINATE_BY]
         self.check_params(response=response, title='F-Store - Catalog', qs_db=qs_db)
 
     def test_single_cat(self):
         for cat in ProdCategory.objects.all():
             response = self.client.get(reverse('products:category', args=(cat.id,)))
-            qs_db = cat.product_set.all()[:6]
+            qs_db = cat.product_set.all()[:PAGINATE_BY]
             self.check_params(response=response, title=cat.name, qs_db=qs_db)

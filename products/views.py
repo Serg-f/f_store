@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView, DetailView
 from django.http import JsonResponse
 
+from f_store.settings import PAGINATE_BY
 from .models import CartItem, ProdCategory, Product
 
 
@@ -13,7 +14,7 @@ class IndexView(TemplateView):
 
 class ProductsView(ListView):
     template_name = 'products/products.html'
-    paginate_by = 6
+    paginate_by = PAGINATE_BY
 
     def get_queryset(self):
         self.cat_selected = get_object_or_404(ProdCategory, **self.kwargs) if self.kwargs.get('pk') else None
@@ -31,6 +32,12 @@ class ProductDetailView(DetailView):
     template_name = 'products/product_detail.html'
     model = Product
     context_object_name = 'prod'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product_ids = tuple(self.object.category.product_set.values_list('id', flat=True))
+        context['page_number'] = product_ids.index(self.object.id) // PAGINATE_BY + 1
+        return context
 
 
 @login_required
