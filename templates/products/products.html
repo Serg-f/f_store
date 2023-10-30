@@ -149,15 +149,25 @@
         });
 
         function updateCartByProdId(productId) {
-            $.ajax({
-                url: "{% url 'products:add_cart_item' %}",
-                type: "POST",
-                data: {
-                    'product_id': productId,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+            let csrfToken = '{{ csrf_token }}';  // Get the CSRF token
+
+            fetch("{% url 'products:add_cart_item' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
                 },
-                dataType: 'json',
-                success: function (data) {
+                body: JSON.stringify({
+                    'product_id': productId
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(data => {
                     cartItemId = data.cartItemId;
                     // Existing cart item input field
                     let existingCartItemInput = document.querySelector(`[data-cart-item-id='${cartItemId}']`);
@@ -182,23 +192,23 @@
                         newCartItem.className = 'cart-item';
                         newCartItem.id = `cart-item-${cartItemId}`;
                         newCartItem.innerHTML = `
-                            <a href="${linkToDetail}">
-                                <img src="${productImage}" alt="${productName}" class="cart-item-image">
-                            </a>
-                            <div class="cart-item-details">
-                                <a href="${linkToDetail}">
-                                    <span class="cart-item-name">${productName}</span>
-                                </a>
-                                <div class="cart-item-controls">
-                                    <button class="btn btn-outline-secondary" onclick="decrementQuantity(${cartItemId})">-</button>
-                                    <input data-cart-item-id='${cartItemId}' type="text" class="form-control" value="1" readonly>
-                                    <button class="btn btn-outline-secondary" onclick="incrementQuantity(${cartItemId})">+</button>
-                                    <input price-id="${cartItemId}" value="${productPrice}" type="hidden">
-                                    <span cart-cost-id='${cartItemId}' class="cart-item-cost">${productPrice.toFixed(2)} €</span>
-                                    <a href="#" onclick="removeCartItem(${cartItemId})"><i class="fas fa-trash"></i></a>
-                                </div>
-                            </div>
-                        `;
+                <a href="${linkToDetail}">
+                    <img src="${productImage}" alt="${productName}" class="cart-item-image">
+                </a>
+                <div class="cart-item-details">
+                    <a href="${linkToDetail}">
+                        <span class="cart-item-name">${productName}</span>
+                    </a>
+                    <div class="cart-item-controls">
+                        <button class="btn btn-outline-secondary" onclick="decrementQuantity(${cartItemId})">-</button>
+                        <input data-cart-item-id='${cartItemId}' type="text" class="form-control" value="1" readonly>
+                        <button class="btn btn-outline-secondary" onclick="incrementQuantity(${cartItemId})">+</button>
+                        <input price-id="${cartItemId}" value="${productPrice}" type="hidden">
+                        <span cart-cost-id='${cartItemId}' class="cart-item-cost">${productPrice.toFixed(2)} €</span>
+                        <a href="#" onclick="removeCartItem(${cartItemId})"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+            `;
 
                         // Check if cartItemsDiv and totalCostDiv exist, create them if they don't
                         let cartItemsDiv = document.querySelector('.cart-items');
@@ -211,11 +221,12 @@
                         // Update front-end cart
                         updateFrontCart(cartItemId, 'update');
                     }
-                }
-
-
-            });
+                })
+                .catch(error => {
+                    console.error("There was a problem with the fetch operation:", error);
+                });
         }
+
 
         function createCartItem(productId) {
             if (!{{ user.is_authenticated|yesno:"true,false" }}) {

@@ -67,15 +67,15 @@
                                             <div class="cart-item" id="cart-item-{{ cart_item.id }}">
                                                 <!-- Product image on the left -->
                                                 <a href="{% url 'products:detail' cart_item.product.id %}">
-                                                <img src="{{ cart_item.product.image.url }}"
-                                                     alt="{{ cart_item.product.name }}"
-                                                     class="cart-item-image">
+                                                    <img src="{{ cart_item.product.image.url }}"
+                                                         alt="{{ cart_item.product.name }}"
+                                                         class="cart-item-image">
                                                 </a>
 
                                                 <!-- Product name above the controls -->
                                                 <div class="cart-item-details">
                                                     <a href="{% url 'products:detail' cart_item.product.id %}">
-                                                    <span class="cart-item-name">{{ cart_item.product.name }}</span>
+                                                        <span class="cart-item-name">{{ cart_item.product.name }}</span>
                                                     </a>
                                                     <div class="cart-item-controls">
                                                         <button class="btn btn-outline-secondary"
@@ -327,25 +327,35 @@
     }
 
     function updateCart(cartItemId, action) {
-        $.ajax({
-            url: "{% url 'products:update_cart' %}",
-            type: "POST",
-            data: {
-                'cart_item_id': cartItemId,
-                'action': action,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
+        let csrfToken = '{{ csrf_token }}';  // Get the CSRF token
+
+        fetch("{% url 'products:update_cart' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
             },
-            dataType: 'json',
-            success: function (data) {
-                if (data.status == 'success') {
-                    updateFrontCart(cartItemId, data.action)
-
+            body: JSON.stringify({
+                'cart_item_id': cartItemId,
+                'action': action
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
                 }
-            }
-
-
-        });
+                return response.json();
+            })
+            .then(data => {
+                if (data.status == 'success') {
+                    updateFrontCart(cartItemId, data.action);
+                }
+            })
+            .catch(error => {
+                console.error("There was a problem with the fetch operation:", error);
+            });
     }
+
 
     function incrementQuantity(cartItemId) {
         updateCart(cartItemId, 'add');

@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView, DetailView
@@ -43,8 +45,9 @@ class ProductDetailView(DetailView):
 @login_required
 def update_cart(request):
     if request.method == 'POST':
-        action = request.POST.get('action')
-        cart_item_id = request.POST.get('cart_item_id')
+        data = json.loads(request.body)
+        action = data.get('action')
+        cart_item_id = data.get('cart_item_id')
         kwargs = {'id': cart_item_id, 'user': request.user}
         if not CartItem.objects.filter(**kwargs).exists():
             return JsonResponse({'status': 'error'})
@@ -72,7 +75,9 @@ def update_cart(request):
 @login_required
 def add_cart_item(request):
     if request.method == 'POST':
-        product_id = request.POST.get('product_id')
+        data = json.loads(request.body)
+        product_id = data.get('product_id')
+
         kwargs = {'product_id': product_id, 'user': request.user}
         if CartItem.objects.filter(**kwargs).exists():
             item = CartItem.objects.get(**kwargs)
