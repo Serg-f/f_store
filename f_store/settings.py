@@ -13,6 +13,7 @@ import environ
 import os
 from pathlib import Path
 
+
 env = environ.Env(
     # set casting
     DEBUG=bool,
@@ -196,7 +197,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 # sending email
-if DEBUG:
+if not DEBUG:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 else:

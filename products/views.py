@@ -42,7 +42,6 @@ class ProductDetailView(DetailView):
         return context
 
 
-@login_required
 def update_cart(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -72,7 +71,7 @@ def update_cart(request):
     return JsonResponse({'status': 'error'})
 
 
-@login_required
+
 def add_cart_item(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -88,6 +87,23 @@ def add_cart_item(request):
         return JsonResponse({
             'status': 'success',
             'cartItemId': item.id,
+        })
+    else:
+        return JsonResponse({'status': 'error'})
+
+
+def get_cart_items(request):
+    if request.method == 'GET':
+        cart_items = CartItem.objects.filter(user=request.user)
+        cart_items = [{
+            'id': item.id,
+            'name': item.product.name,
+            'price': item.product.price,
+            'quantity': item.quantity,
+        } for item in cart_items]
+        return JsonResponse({
+            'status': 'success',
+            'cartItems': cart_items,
         })
     else:
         return JsonResponse({'status': 'error'})
