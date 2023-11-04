@@ -71,7 +71,6 @@ def update_cart(request):
     return JsonResponse({'status': 'error'})
 
 
-
 def add_cart_item(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -107,5 +106,17 @@ def get_cart_items(request):
             'status': 'success',
             'cartItems': cart_items,
         })
+    else:
+        return JsonResponse({'status': 'error'})
+
+
+def save_cart(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        CartItem.objects.filter(user=request.user).delete()
+        print(data)
+        for item in data.values():
+            CartItem.objects.create(user=request.user, product_id=item['productId'], quantity=item['quantity'])
+        return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'error'})

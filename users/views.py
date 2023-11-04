@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.html import format_html
@@ -122,3 +123,9 @@ class EmailVerificationView(TitleMixin, TemplateView):
             return super().get(request, *args, **kwargs)
         else:
             return redirect('index')
+
+
+def check_authentication_status(request):
+    return JsonResponse({
+        'is_authenticated': request.user.is_authenticated
+    })

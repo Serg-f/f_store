@@ -216,3 +216,7 @@ body.no-scroll {
     position: sticky;
     top: 80px;
 }
+
+#logo-image {
+    width: 26px;
+}
