@@ -1,51 +1,13 @@
 {% load custom_filters %}
-<div id="cart-content" style="display: {% if cart_items %}block{% else %}none{% endif %};">
+<div id="profile-cart-content" style="display: none;">
     <h4 class="mt-3 mb-3 d-flex justify-content-between align-items-center">
         Cart <span id="profile-cart-total-quantity"
-                   class="badge badge-secondary badge-pill">{{ cart_items.total_quantity }}</span>
+                   class="badge badge-secondary badge-pill"></span>
     </h4>
 
-    {% for cart_item in cart_items %}
-        <div class="cart-item mb-3" id="cart-item-{{ cart_item.id }}">
-            <a href="{% url 'products:detail' cart_item.product.id %}">
-                <img src="{{ cart_item.product.image.url }}" alt="{{ cart_item.product.name }}"
-                     class="cart-item-image">
-            </a>
-            <div class="cart-item-details">
-                <a href="{% url 'products:detail' cart_item.product.id %}">
-                    <h5 class="card-title">{{ cart_item.product.name }}</h5>
-                </a>
-
-                <div class="cart-item-controls">
-                    <button class="btn btn-outline-secondary my-btn"
-                            onclick="decrementQuantity({{ cart_item.id }})">
-                        -
-                    </button>
-                    <input name="basketID" type="text" class="form-control"
-                           value="{{ cart_item.quantity }}"
-                           readonly data-cart-item-id="{{ cart_item.id }}">
-                    <button class="btn btn-outline-secondary my-btn"
-                            onclick="incrementQuantity({{ cart_item.id }})">
-                        +
-                    </button>
-                    <input price-id="{{ cart_item.id }}" value="{{ cart_item.product.price }}"
-                           type="hidden">
-                    <span cart-cost-id="{{ cart_item.id }}"
-                          class="cart-item-cost">{{ cart_item.cost|floatformat:"2" }} €</span>
-
-                    <a href="#" onclick="removeCartItem({{ cart_item.id }})">
-                        <i class="fas fa-trash"></i>
-                    </a>
-
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-
-    <div class="card mb-3">
+    <div id="total-cost-div" class="card mb-3">
         <div class="card-footer">
             <div id="total-cost" class="cart-total">
-                Total: {{ cart_items.total_cost|floatformat:"2" }} €
             </div>
         </div>
     </div>
@@ -54,7 +16,7 @@
     </a>
 
 </div>
-<div id="empty-cart-message" style="display: {% if cart_items %}none{% else %}block{% endif %};">
+<div id="empty-cart-message" style="display: block;">
     <h4 class="mt-3 mb-3 text-center">
         Cart is empty
     </h4>

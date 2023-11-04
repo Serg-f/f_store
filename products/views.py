@@ -97,8 +97,10 @@ def get_cart_items(request):
         cart_items = CartItem.objects.filter(user=request.user)
         cart_items = [{
             'id': item.id,
+            'product_id': item.product.id,
             'name': item.product.name,
             'price': item.product.price,
+            'image': item.product.image.url,
             'quantity': item.quantity,
         } for item in cart_items]
         return JsonResponse({

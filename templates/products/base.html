@@ -51,55 +51,18 @@
                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <div id="base-cart-total-quantity-wrapper">
                                     <div id="base-cart-total-quantity"
-                                         style="display: {% if cart_items.total_quantity %}block
-                                         {% else %}none
-                                         {% endif %};">{{ cart_items.total_quantity }}
+                                         style="display: none">
                                     </div>
                                 </div>
                                 <i class="fas fa-shopping-cart"></i> Cart
                             </a>
                             <div class="dropdown-menu" aria-labelledby="cartDropdown">
                                 <!-- Dropdown Cart Items -->
-                                <div id="cart-content"
-                                     style="display: {% if cart_items %}block{% else %}none{% endif %};">
+                                <div id="cart-content" style="display: none">
                                     <div class="cart-items">
-                                        {% for cart_item in cart_items %}
-                                            <div class="cart-item" id="cart-item-{{ cart_item.id }}">
-                                                <!-- Product image on the left -->
-                                                <a href="{% url 'products:detail' cart_item.product.id %}">
-                                                    <img src="{{ cart_item.product.image.url }}"
-                                                         alt="{{ cart_item.product.name }}"
-                                                         class="cart-item-image">
-                                                </a>
-
-                                                <!-- Product name above the controls -->
-                                                <div class="cart-item-details">
-                                                    <a href="{% url 'products:detail' cart_item.product.id %}">
-                                                        <span class="cart-item-name">{{ cart_item.product.name }}</span>
-                                                    </a>
-                                                    <div class="cart-item-controls">
-                                                        <button class="btn btn-outline-secondary"
-                                                                onclick="decrementQuantity({{ cart_item.id }})">-
-                                                        </button>
-                                                        <input data-cart-item-id='{{ cart_item.id }}' type="text"
-                                                               class="form-control" value="{{ cart_item.quantity }}"
-                                                               readonly>
-                                                        <button class="btn btn-outline-secondary"
-                                                                onclick="incrementQuantity({{ cart_item.id }})">+
-                                                        </button>
-                                                        <input price-id="{{ cart_item.id }}"
-                                                               value="{{ cart_item.product.price }}"
-                                                               type="hidden">
-                                                        <span cart-cost-id='{{ cart_item.id }}'
-                                                              class="cart-item-cost">{{ cart_item.cost|floatformat:"-2" }} €</span>
-                                                        <a href="#" onclick="removeCartItem({{ cart_item.id }})"><i
-                                                                class="fas fa-trash"></i></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
+                                        {# cart items here #}
                                         <div id="total-cost" class="cart-total">
-                                            Total: {{ cart_items.total_cost|floatformat:"2" }} €
+                                            {# Total 0.00 € #}
                                         </div>
                                     </div>
 
@@ -108,8 +71,7 @@
                                         <a href="{% url 'orders:create_order' %}" class="btn btn-secondary">Checkout</a>
                                     </div>
                                 </div>
-                                <div id="empty-cart-message"
-                                     style="display: {% if cart_items %}none{% else %}block{% endif %};">
+                                <div id="empty-cart-message" style="display: block">
                                     <h4 class="mt-3 mb-3 text-center">
                                         Cart is empty
                                     </h4>
@@ -216,7 +178,11 @@
 <script>
 
     document.addEventListener("DOMContentLoaded", function () {
-        updateTotalQuantityDisplay();
+        setDropdown();
+        getCartItems();
+    });
+
+    function setDropdown() {
         const isMobile = window.matchMedia("only screen and (max-width: 992px)").matches;
 
         if (isMobile) {
@@ -250,10 +216,120 @@
             $('.dropdown-menu').hide();
             document.body.classList.remove('no-scroll');
         });
-    });
+    }
+
+    function getCartItems() {
+        if (getAuthenticated()) {
+            fetch("{% url 'products:get_cart_items' %}")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status == 'success') {
+                        let cartItems = data.cartItems;
+                        if (cartItems.length > 0) {
+                            if (isBaseCartExists()) {
+                                let cartItemsDiv = document.querySelector('.cart-items');
+                                let totalCostDiv = document.getElementById('total-cost');
+
+                                cartItems.forEach(cartItem => {
+                                    let newCartItem = createNewCartItemHTML(cartItem, cartItem.product_id, cartItem.id);
+                                    cartItemsDiv.insertBefore(newCartItem, totalCostDiv);
+                                });
+
+                                updateTotalQuantityAndCost();
+                                updateTotalQuantityDisplay();
+
+                                document.getElementById('cart-content').style.display = 'block';
+                                document.getElementById('empty-cart-message').style.display = 'none';
+
+                            } else if (isProfileCartExists()) {
+                                let cartItemsDiv = document.getElementById('profile-cart-content')
+                                let totalCostDiv = document.getElementById('total-cost-div');
+
+                                cartItems.forEach(cartItem => {
+                                    let newCartItem = createNewProfileCartItemHTML(cartItem);
+                                    cartItemsDiv.insertBefore(newCartItem, totalCostDiv);
+                                });
+
+                                updateTotalQuantityAndCost();
+
+                                document.getElementById('profile-cart-content').style.display = 'block';
+                                document.getElementById('empty-cart-message').style.display = 'none';
+                            } else if (isCheckoutCartExists()) {
+                                let cartItemsList = document.querySelector('#checkout-cart-content ul');
+                                let totalCostItem = document.querySelector('#checkout-cart-content .list-group-item:last-child');
+
+                                cartItems.forEach(cartItem => {
+                                    let newCheckoutCartItem = createNewCheckoutCartItemHTML(cartItem);
+                                    // Insert new items before the total cost item
+                                    cartItemsList.insertBefore(newCheckoutCartItem, totalCostItem);
+                                });
+
+                                updateTotalQuantityAndCost();
+                            }
+
+                        }
+
+                    }
+                })
+                .catch(error => {
+                    console.error("There was a problem with the fetch operation:", error);
+                });
+        } else {
+            // Retrieve cart items from local storage
+            let cartItems = localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : {};
+            let cartItemsDiv = document.querySelector('.cart-items');
+            let totalCostDiv = document.getElementById('total-cost');
+
+            // Check if there are any items in the cart
+            if (Object.keys(cartItems).length > 0) {
+                Object.values(cartItems).forEach(cartItem => {
+                    let newCartItem = createNewCartItemHTML(cartItem, cartItem.productId, cartItem.cartItemId);
+                    cartItemsDiv.insertBefore(newCartItem, totalCostDiv);
+                });
+
+                updateTotalQuantityAndCost();
+                updateTotalQuantityDisplay();
+
+                document.getElementById('cart-content').style.display = 'block';
+                document.getElementById('empty-cart-message').style.display = 'none';
+            } else {
+                document.getElementById('cart-content').style.display = 'none';
+                document.getElementById('empty-cart-message').style.display = 'block';
+            }
+        }
+
+    }
+
+    function getAuthenticated() {
+        {% if user.is_authenticated %}
+            return true;
+        {% else %}
+            return false;
+        {% endif %}
+    }
+
+    function isBaseCartExists() {
+        let cartExists = document.getElementById('cartDropdown');
+        return !!cartExists;
+    }
+
+    function isProfileCartExists() {
+        let cartExists = document.getElementById('profile-cart-content');
+        return !!cartExists;
+    }
+
+    function isCheckoutCartExists() {
+        let cartExists = document.getElementById('checkout-cart-content');
+        return !!cartExists;
+    }
 
     function updateTotalQuantityDisplay() {
-        {% if request.path != profile_url and request.path != checkout_url %}
+        if (isBaseCartExists()) {
             const totalQuantityElement = document.getElementById('base-cart-total-quantity');
             const totalQuantity = parseInt(totalQuantityElement.textContent, 10);
 
@@ -262,7 +338,8 @@
             } else {
                 totalQuantityElement.style.display = 'block';
             }
-        {% endif %}
+        }
+
     }
 
     function updateFrontCart(cartItemId, action) {
@@ -282,7 +359,7 @@
             currentQuantity = 0;
         }
 
-        if (currentQuantity === 0 || action === 'remove') {
+        if (currentQuantity === 0) {
             // Remove the entire cart item div using the id
 
             let cartItemDiv = document.getElementById(`cart-item-${cartItemId}`);
@@ -296,9 +373,16 @@
         }
 
 
+        updateTotalQuantityAndCost()
+
+        updateTotalQuantityDisplay();
+    }
+
+    function updateTotalQuantityAndCost() {
         // Update the total quantity and total cost
         let totalQuantityElement = document.getElementById('base-cart-total-quantity') ||
-            document.getElementById('profile-cart-total-quantity');
+            document.getElementById('profile-cart-total-quantity') ||
+            document.getElementById('checkout-cart-total-quantity');
         let totalCostElement = document.getElementById('total-cost');
 
         let allQuantities = document.querySelectorAll('[data-cart-item-id]');
@@ -308,7 +392,7 @@
         let totalCost = 0;
 
         allQuantities.forEach(input => {
-            totalQuantity += parseInt(input.value);
+            totalQuantity += parseInt(input.value || input.textContent);
         });
 
         allCosts.forEach(cost => {
@@ -316,44 +400,73 @@
         });
 
         totalQuantityElement.textContent = totalQuantity;
-        totalCostElement.textContent = `Total ${totalCost.toFixed(2)} €`;
+        let totalWord = document.getElementById('checkout-cart-total-quantity') ? '' : 'Total ';
+        totalCostElement.textContent = totalWord + `${totalCost.toFixed(2)} €`;
 
         if (totalQuantity === 0) {
-            document.getElementById('cart-content').style.display = 'none';
+            let cartContent = document.getElementById('cart-content') ||
+                document.getElementById('profile-cart-content');
+            cartContent.style.display = 'none';
             document.getElementById('empty-cart-message').style.display = 'block';
         }
-
-        updateTotalQuantityDisplay();
     }
 
     function updateCart(cartItemId, action) {
-        let csrfToken = '{{ csrf_token }}';  // Get the CSRF token
+        if (getAuthenticated()) {
+            let csrfToken = '{{ csrf_token }}';  // Get the CSRF token
 
-        fetch("{% url 'products:update_cart' %}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify({
-                'cart_item_id': cartItemId,
-                'action': action
+            fetch("{% url 'products:update_cart' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    'cart_item_id': cartItemId,
+                    'action': action
+                })
             })
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status == 'success') {
+                        updateFrontCart(cartItemId, action);
+                    }
+                })
+                .catch(error => {
+                    console.error("There was a problem with the fetch operation:", error);
+                });
+        } else {
+            // If user is not authenticated, update the cart in local storage
+            let cartItems = localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : {};
+            if (action === 'add' || action === 'minus') {
+                if (cartItems[cartItemId]) {
+                    let newQuantity = action === 'add' ? cartItems[cartItemId].quantity + 1 : cartItems[cartItemId].quantity - 1;
+                    if (newQuantity > 0) {
+                        cartItems[cartItemId].quantity = newQuantity;
+                    } else {
+                        delete cartItems[cartItemId]; // remove item from cart if quantity is 0
+                    }
                 }
-                return response.json();
-            })
-            .then(data => {
-                if (data.status == 'success') {
-                    updateFrontCart(cartItemId, data.action);
-                }
-            })
-            .catch(error => {
-                console.error("There was a problem with the fetch operation:", error);
-            });
+            } else if (action === 'remove') {
+                delete cartItems[cartItemId]; // remove item from cart
+            }
+
+            // Check if cartItems is empty, if so delete it from localStorage
+            if (Object.keys(cartItems).length === 0) {
+                localStorage.removeItem('cartItems');
+            } else {
+                // Save the updated cart items back to local storage
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            }
+
+            // Update the front end to reflect the changes
+            updateFrontCart(cartItemId, action);
+        }
     }
 
 
@@ -373,27 +486,14 @@
         return '{{ csrf_token }}';
     }
 
-    function postProductToCart(productId) {
-        let csrfToken = getCsrfToken();
-
-        return fetch("{% url 'products:add_cart_item' %}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify({
-                'product_id': productId
-            })
-        });
-    }
 
     function getProductDataFromAttributes(productId) {
         let productDiv = document.querySelector(`[data-product-id='${productId}']`);
         return {
             name: productDiv.querySelector(`[prod-name-id='${productId}']`).textContent,
             image: productDiv.querySelector(`[prod-img-id='${productId}']`).src,
-            price: parseFloat(productDiv.querySelector(`[prod-price-id='${productId}']`).textContent)
+            price: parseFloat(productDiv.querySelector(`[prod-price-id='${productId}']`).textContent),
+            quantity: '1'
         };
     }
 
@@ -401,7 +501,8 @@
         return {
             name: document.getElementById('name').textContent,
             image: document.getElementById('image').src,
-            price: parseFloat(document.getElementById('price').textContent)
+            price: parseFloat(document.getElementById('price').textContent),
+            quantity: '1'
         };
     }
 
@@ -419,17 +520,71 @@
                     <span class="cart-item-name">${productData.name}</span>
                 </a>
                 <div class="cart-item-controls">
-                    <button class="btn btn-outline-secondary" onclick="decrementQuantity(${cartItemId})">-</button>
-                    <input data-cart-item-id='${cartItemId}' type="text" class="form-control" value="1" readonly>
-                    <button class="btn btn-outline-secondary" onclick="incrementQuantity(${cartItemId})">+</button>
+                    <button class="btn btn-outline-secondary" onclick="decrementQuantity('${cartItemId}')">-</button>
+                    <input data-cart-item-id='${cartItemId}' type="text" class="form-control" value='${productData.quantity}' readonly>
+                    <button class="btn btn-outline-secondary" onclick="incrementQuantity('${cartItemId}')">+</button>
                     <input price-id="${cartItemId}" value="${productData.price}" type="hidden">
-                    <span cart-cost-id='${cartItemId}' class="cart-item-cost">${productData.price.toFixed(2)} €</span>
-                    <a href="#" onclick="removeCartItem(${cartItemId})"><i class="fas fa-trash"></i></a>
+                    <span cart-cost-id='${cartItemId}' class="cart-item-cost">${(productData.quantity * productData.price).toFixed(2)} €</span>
+                    <a href="#" onclick="removeCartItem('${cartItemId}')"><i class="fas fa-trash"></i></a>
                 </div>
             </div>
         `;
         return newCartItem;
     }
+
+    function createNewProfileCartItemHTML(productData) {
+        // Assuming productData has properties similar to cart_item in the Django template
+        let linkToDetail = "{% url 'products:detail' 0 %}".replace('0', productData.product_id);
+        let newProfileCartItem = document.createElement('div');
+        newProfileCartItem.className = 'cart-item mb-3';
+        newProfileCartItem.id = `cart-item-${productData.id}`;
+
+        newProfileCartItem.innerHTML = `
+            <a href="${linkToDetail}">
+                <img src="${productData.image}" alt="${productData.name}" class="cart-item-image">
+            </a>
+            <div class="cart-item-details">
+                <a href="${linkToDetail}">
+                    <h5 class="card-title">${productData.name}</h5>
+                </a>
+                <div class="cart-item-controls">
+                    <button class="btn btn-outline-secondary my-btn" onclick="decrementQuantity(${productData.id})">
+                        -
+                    </button>
+                    <input name="basketID" type="text" class="form-control" value="${productData.quantity}" readonly data-cart-item-id="${productData.id}">
+                    <button class="btn btn-outline-secondary my-btn" onclick="incrementQuantity(${productData.id})">
+                        +
+                    </button>
+                    <input price-id="${productData.id}" value="${productData.price}" type="hidden">
+                    <span cart-cost-id="${productData.id}" class="cart-item-cost">${(productData.quantity * productData.price).toFixed(2)} €</span>
+                    <a href="#" onclick="removeCartItem(${productData.id})">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+        `;
+
+        return newProfileCartItem;
+    }
+
+    function createNewCheckoutCartItemHTML(productData) {
+        let linkToDetail = "{% url 'products:detail' 0 %}".replace('0', productData.product_id);
+        let newCheckoutCartItem = document.createElement('li');
+        newCheckoutCartItem.className = 'list-group-item d-flex justify-content-between lh-sm';
+        newCheckoutCartItem.innerHTML = `
+            <div style="margin-right: 10px">
+                <a href="${linkToDetail}">
+                    <h6 class="my-0">${productData.name}</h6>
+                </a>
+                <small class="text-muted" data-cart-item-id>${productData.quantity} pcs.</small>
+            </div>
+            <span class="ml-auto" cart-cost-id>${(productData.quantity * productData.price).toFixed(2)}</span>
+            <div class="text-muted"> €</div>
+        `;
+
+        return newCheckoutCartItem;
+    }
+
 
     function handleCartItem(cartItemId, productData, productId) {
         let existingCartItemInput = document.querySelector(`[data-cart-item-id='${cartItemId}']`);
@@ -451,22 +606,61 @@
     }
 
     function updateCartByProdId(productId, dataSource) {
-        postProductToCart(productId)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then(data => {
-                let cartItemId = data.cartItemId;
-                let productData = (dataSource === "attributes") ? getProductDataFromAttributes(productId) : getProductDataFromIds();
+        let productData = (dataSource === "attributes") ? getProductDataFromAttributes(productId) : getProductDataFromIds();
+        if (getAuthenticated()) {
+            let csrfToken = getCsrfToken();
 
-                handleCartItem(cartItemId, productData, productId);
+            fetch("{% url 'products:add_cart_item' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    'product_id': productId
+                })
             })
-            .catch(error => {
-                console.error("There was a problem with the fetch operation:", error);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let cartItemId = data.cartItemId;
+
+
+                    handleCartItem(cartItemId, productData, productId);
+                })
+                .catch(error => {
+                    console.error("There was a problem with the fetch operation:", error);
+                });
+        } else {
+            // If user is not authenticated, use localStorage to store the cart items
+            let cartItems = localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : {};
+
+            // Check if the product already exists in the cart
+            let existingCartItem = Object.values(cartItems).find(item => item.productId === productId);
+
+            if (existingCartItem) {
+                // If the item already exists, increment its quantity
+                existingCartItem.quantity = parseInt(existingCartItem.quantity) + 1;
+            } else {
+                // Generate a unique cart item ID using the current timestamp and a random number
+                let cartItemId = 'ci_' + Date.now().toString() + Math.floor(Math.random() * 1000).toString();
+                productData.cartItemId = cartItemId; // Add the generated cartItemId to the product data
+
+                // Add the new item with a quantity of 1 and the unique cartItemId
+                cartItems[cartItemId] = {...productData, productId: productId, quantity: 1};
+            }
+
+            // Save the updated cart items back to local storage
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+            // The cartItemId used in handleCartItem should be the one from productData or a generated one
+            handleCartItem(productData.cartItemId || existingCartItem.cartItemId, productData, productId);
+        }
+
     }
 
     function checkUserAuthenticationAndRedirect() {
@@ -488,7 +682,6 @@
     }
 
     function createCartItem(productId, dataSource, cardSelector) {
-        checkUserAuthenticationAndRedirect();
 
         updateCartByProdId(productId, dataSource);
 
