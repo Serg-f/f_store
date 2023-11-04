@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy, reverse, resolve, Resolver404
 from django.utils.html import format_html
 from django.views.generic import CreateView, UpdateView
 from django.views.generic.base import ContextMixin, TemplateView
@@ -57,8 +57,9 @@ class UserLoginView(SuccessMessageMixin, TitleMixin, LoginView):
 
 class UserLogoutView(LogoutView):
     def dispatch(self, request, *args, **kwargs):
-        # Save the current URL to redirect back to it after logout
-        self.next_page = request.META.get('HTTP_REFERER', '/')
+        # Get the URL to redirect to, defaulting to the index page.
+        referer_url = request.META.get('HTTP_REFERER', reverse('index'))
+        self.next_page = referer_url if self.is_safe_url(referer_url, request) else reverse('index')
 
         success_message = format_html(f'Goodbye, {request.user.username}! You have successfully logged out.')
         messages.success(request, success_message)
@@ -70,6 +71,26 @@ class UserLogoutView(LogoutView):
         Return the URL to redirect to after processing this request.
         """
         return self.next_page or super().get_next_page()
+
+    @staticmethod
+    def is_safe_url(url, request):
+        """
+        Determine if the given URL is safe to redirect to after logout.
+        """
+        try:
+            view, args, kwargs = resolve(url)
+            # Check if the view function has the attribute 'login_required' set to True
+            # This would be the case if the @login_required decorator was used
+            if getattr(view, 'login_required', False):
+                return False
+            # Check if the view is a class-based view and inherits from LoginRequiredMixin
+            if isinstance(view, type) and issubclass(view, LoginRequiredMixin):
+                return False
+        except Resolver404:
+            # If the URL does not resolve, it is not safe to redirect to
+            return False
+        return True
+
 
 class RegisterView(SuccessMessageMixin, TitleMixin, CreateView):
     title = 'Create an account'
