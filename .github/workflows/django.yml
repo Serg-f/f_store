@@ -20,8 +20,15 @@ jobs:
         python-version: ['3.10']
     env:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      DEBUG: True
+      DEBUG: ${{ secrets.DEBUG }}
       DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
+      ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
 
       EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
       EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}

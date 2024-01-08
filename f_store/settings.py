@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import json
+
 import environ
 import os
 from pathlib import Path
@@ -18,6 +20,7 @@ env = environ.Env(
     # set casting
     DEBUG=bool,
     SECRET_KEY=str,
+    ALLOWED_HOSTS=str,
 
     # database settings
     DB_NAME=str,
@@ -58,7 +61,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = json.loads(env('ALLOWED_HOSTS'))
 
 DOMAIN_NAME = env('DOMAIN_NAME')
 
