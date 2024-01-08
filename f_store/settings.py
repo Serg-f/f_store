@@ -19,6 +19,14 @@ env = environ.Env(
     DEBUG=bool,
     SECRET_KEY=str,
 
+    # database settings
+    DB_NAME=str,
+    DB_USER=str,
+    DB_PASSWORD=str,
+    DB_HOST=str,
+    DB_PORT=int,
+
+    # email settings
     DOMAIN_NAME=str,
     EMAIL_HOST=str,
     EMAIL_PORT=int,
@@ -27,6 +35,7 @@ env = environ.Env(
     EMAIL_USE_TLS=bool,
     EMAIL_USE_SSL=bool,
 
+    # stripe settings
     STRIPE_PUBLIC_KEY=str,
     STRIPE_SECRET_KEY=str,
     STRIPE_WEBHOOK_SECRET=str,
@@ -127,21 +136,14 @@ INTERNAL_IPS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env("DB_PASSWORD"),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": "f_store_db",
-#         "USER": "adminuser",
-#         "PASSWORD": "Adminuser1234",
-#         "HOST": "localhost",
-#         "PORT": "5432",
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -196,17 +198,13 @@ LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# sending email
-if not DEBUG:
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-else:
-    EMAIL_HOST = env('EMAIL_HOST')
-    EMAIL_PORT = env('EMAIL_PORT')
-    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-    EMAIL_USE_TLS = env('EMAIL_USE_TLS')
-    EMAIL_USE_SSL = env('EMAIL_USE_SSL')
+# email
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+EMAIL_USE_SSL = env('EMAIL_USE_SSL')
 
 
 # all auth
