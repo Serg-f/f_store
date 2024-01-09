@@ -33,7 +33,6 @@ class Order(models.Model):
 
     def update_after_payment(self):
         items = self.user.cartitem_set.all()
-        self.status = self.PAID
         self.cart_history = {
             'items': [item.get_dict() for item in items],
             'total_cost': str(items.total_cost()),

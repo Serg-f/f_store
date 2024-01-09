@@ -15,7 +15,6 @@ import environ
 import os
 from pathlib import Path
 
-
 env = environ.Env(
     # set casting
     DEBUG=bool,
@@ -120,7 +119,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # 'products.context_processors.cart_items',
 
             ],
         },
@@ -209,7 +207,6 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 EMAIL_USE_SSL = env('EMAIL_USE_SSL')
 
-
 # all auth
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -261,3 +258,7 @@ CKEDITOR_CONFIGS = {
         'width': 800,
     },
 }
+
+# Celery
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'

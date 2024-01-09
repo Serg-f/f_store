@@ -1,4 +1,3 @@
-import time
 from threading import Thread
 import stripe
 import logging
@@ -10,10 +9,10 @@ from django.urls import reverse_lazy, reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, TemplateView, ListView, DetailView, RedirectView
 from http import HTTPStatus
-from products.models import CartItem
 from users.views import TitleMixin
 from .forms import OrderForm
 from .models import Order
+from .tasks import update_order_status
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -130,16 +129,12 @@ def stripe_webhook_view(request):
 
 
 def fulfill_order(metadata):
-    order = Order.objects.get(id=int(metadata.order_id))
-    order.update_after_payment()
-    order.send_user_order_status_email()
-    time.sleep(150)
+    order_id = int(metadata['order_id'])
+    Order.objects.get(pk=order_id).update_after_payment()
 
-    order.status = 2
-    order.save()
-    order.send_user_order_status_email()
-    time.sleep(150)
+    # Use 'delay' for immediate execution of the Celery task
+    update_order_status.delay(order_id, 1)
 
-    order.status = 3
-    order.save()
-    order.send_user_order_status_email()
+    # Schedule future updates with 'apply_async' and 'countdown'
+    update_order_status.apply_async((order_id, 2), countdown=150)
+    update_order_status.apply_async((order_id, 3), countdown=300)
