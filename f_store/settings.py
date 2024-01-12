@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.github',
     'debug_toolbar',
+    'rest_framework',
 
     'products',
     'users',

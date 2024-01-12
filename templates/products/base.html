@@ -223,8 +223,14 @@
 
     function sendCartToBackend() {
         let isUserAuthenticated = getAuthenticated();
-        let cartItems = localStorage.getItem('cartItems');
-        if (isUserAuthenticated && cartItems && cartItems.length > 0) {
+        let cartItemsString = localStorage.getItem('cartItems');
+        if (isUserAuthenticated && cartItemsString && cartItemsString.length > 0) {
+            let cartItemsDict = JSON.parse(cartItemsString);
+            let cartItemsList = Object.values(cartItemsDict).map(item => ({
+                productId: item.productId,
+                quantity: item.quantity
+            }));
+
             let csrfToken = getCsrfToken();
 
             fetch("{% url 'products:save_cart' %}", {
@@ -233,7 +239,7 @@
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrfToken
                 },
-                body: cartItems
+                body: JSON.stringify(cartItemsList)
             })
                 .then(response => {
                     if (!response.ok) {
@@ -252,6 +258,7 @@
         }
     }
 
+
     function getCartItems() {
         getAuthenticatedAsync().then(isUserAuthenticated => {
             if (isUserAuthenticated) {
@@ -263,7 +270,7 @@
                         return response.json();
                     })
                     .then(data => {
-                        if (data.status == 'success') {
+                        if (data.status === 'success') {
                             let cartItems = data.cartItems;
                             if (cartItems.length > 0) {
                                 if (isBaseCartExists()) {
@@ -360,12 +367,12 @@
     }
 
     function getAuthenticated() {
-    {% if user.is_authenticated %}
-        return true;
-    {% else %}
-        return false;
-    {% endif %}
-}
+        {% if user.is_authenticated %}
+            return true;
+        {% else %}
+            return false;
+        {% endif %}
+    }
 
 
     function isBaseCartExists() {
@@ -488,7 +495,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    if (data.status == 'success') {
+                    if (data.status === 'success') {
                         updateFrontCart(cartItemId, action);
                     }
                 })

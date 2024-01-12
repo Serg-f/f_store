@@ -1,12 +1,17 @@
 import json
 
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView, DetailView
 from django.http import JsonResponse
+from rest_framework import status
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from f_store.settings import PAGINATE_BY
 from .models import CartItem, ProdCategory, Product
+from .serializers import CartProductSerializer, CartItemSerializer, GetCartSerializer, SetCartSerializer
 
 
 class IndexView(TemplateView):
@@ -42,81 +47,94 @@ class ProductDetailView(DetailView):
         return context
 
 
-def update_cart(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        action = data.get('action')
-        cart_item_id = data.get('cart_item_id')
-        kwargs = {'id': cart_item_id, 'user': request.user}
-        if not CartItem.objects.filter(**kwargs).exists():
-            return JsonResponse({'status': 'error'})
-        cart_item = CartItem.objects.get(**kwargs)
+class UpdateCartItemView(APIView):
+    permission_classes = [IsAuthenticated]
 
-        if action == 'add':
-            cart_item.quantity += 1
-        elif action == 'minus':
-            cart_item.quantity -= 1
-            if cart_item.quantity == 0:
+    def post(self, request, *args, **kwargs):
+        serializer = CartItemSerializer(data=request.data)
+        if serializer.is_valid():
+            cart_item_id = serializer.validated_data['cart_item_id']
+            action = serializer.validated_data['action']
+            kwargs = {'id': cart_item_id, 'user': request.user}
+            if not CartItem.objects.filter(**kwargs).exists():
+                return Response({'status': 'error'})
+            cart_item = CartItem.objects.get(**kwargs)
+
+            if action == 'add':
+                cart_item.quantity += 1
+            elif action == 'minus':
+                cart_item.quantity -= 1
+                if cart_item.quantity == 0:
+                    cart_item.delete()
+                    return Response({'status': 'success'})
+            elif action == 'remove':
                 cart_item.delete()
-                return JsonResponse({'status': 'success', 'action': 'minus'})
-        elif action == 'remove':
-            cart_item.delete()
-            return JsonResponse({'status': 'success', 'action': 'remove'})
+                return Response({'status': 'success'})
 
-        cart_item.save()
-        return JsonResponse({
+            cart_item.save()
+            return Response({
+                'status': 'success',
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddCartItemView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = CartProductSerializer(data=request.data)
+        if serializer.is_valid():
+            product_id = serializer.validated_data['product_id']
+            kwargs = {'product_id': product_id, 'user': request.user}
+            if CartItem.objects.filter(**kwargs).exists():
+                item = CartItem.objects.get(**kwargs)
+                item.quantity += 1
+                item.save()
+            else:
+                item = CartItem.objects.create(**kwargs, quantity=1)
+
+            return Response({
+                'status': 'success',
+                'cartItemId': item.id,
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetCartView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = GetCartSerializer
+
+    def get_queryset(self):
+        return CartItem.objects.filter(user=self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        return Response({
             'status': 'success',
-            'action': action,
+            'cartItems': self.serializer_class(self.get_queryset(), many=True).data,
         })
-    return JsonResponse({'status': 'error'})
-
-
-def add_cart_item(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        product_id = data.get('product_id')
-
-        kwargs = {'product_id': product_id, 'user': request.user}
-        if CartItem.objects.filter(**kwargs).exists():
-            item = CartItem.objects.get(**kwargs)
-            item.quantity += 1
-            item.save()
-        else:
-            item = CartItem.objects.create(**kwargs, quantity=1)
-        return JsonResponse({
-            'status': 'success',
-            'cartItemId': item.id,
-        })
-    else:
-        return JsonResponse({'status': 'error'})
-
-
-def get_cart_items(request):
-    if request.method == 'GET':
-        cart_items = CartItem.objects.filter(user=request.user)
-        cart_items = [{
-            'id': item.id,
-            'product_id': item.product.id,
-            'name': item.product.name,
-            'price': item.product.price,
-            'image': item.product.image.url,
-            'quantity': item.quantity,
-        } for item in cart_items]
-        return JsonResponse({
-            'status': 'success',
-            'cartItems': cart_items,
-        })
-    else:
-        return JsonResponse({'status': 'error'})
 
 
 def save_cart(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         CartItem.objects.filter(user=request.user).delete()
-        print(data)
         for item in data.values():
             CartItem.objects.create(user=request.user, product_id=item['productId'], quantity=item['quantity'])
         return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'error'})
+
+
+class SetCartView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = SetCartSerializer(data=request.data, many=True)
+        if serializer.is_valid():
+            CartItem.objects.filter(user=request.user).delete()
+            CartItem.objects.bulk_create([
+                CartItem(user=request.user, **item) for item in serializer.validated_data
+            ])
+
+            return Response({'status': 'success'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
