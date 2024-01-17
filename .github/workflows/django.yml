@@ -83,7 +83,7 @@ jobs:
         with:
           host: ${{ secrets.CD_HOST }}
           username: ${{ secrets.CD_USERNAME }}
-          key: ${{ secrets.KEY }}
+          key: ${{ secrets.CD_KEY }}
           script: |
             cd /var/www/f_store
             git pull
